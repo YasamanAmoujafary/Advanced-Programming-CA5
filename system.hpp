@@ -1,27 +1,35 @@
 #include "plant.hpp"
 
-enum State{
+enum State
+{
     IN_GAME,
     WIN_SCREEN,
     GAMEOVER_SCREEN,
     EXIT
 };
 
-class System{
+class System
+{
 public:
-    System( State _state);
+    System(State _state);
     void run();
     //~System();
-    RenderWindow window;
-    void Add_plant(string plant_name);
+    void Add_plant(string plant_name, int position_x, int position_y);
+
 private:
+    RenderWindow window;
     int window_width;
     int window_height;
-    vector <Plant *> plants;
+    vector<Plant *> plants;
+    vector<Plant *> item_bar_objects;
     State state;
     Texture background_texture;
+    Texture item_bar_texture;
     Sprite background_sprite;
-    //void update();
+    Sprite item_bar_sprite;
+    // void update();
     void render();
     void handle_events();
+    void which_item_selected();
+    void set_background();
 };
