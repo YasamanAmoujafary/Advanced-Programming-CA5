@@ -1,3 +1,7 @@
+#ifndef _includes_
+#define _defines_
+
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -16,3 +20,4 @@ const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
 
 
+#endif

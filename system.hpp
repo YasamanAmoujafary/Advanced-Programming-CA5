@@ -13,10 +13,7 @@ public:
     void run();
     //~System();
     RenderWindow window;
-    void Add_plant()
-    {
-       // Plant plant(&window);
-    }
+    void Add_plant(string plant_name);
 private:
     int window_width;
     int window_height;

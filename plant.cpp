@@ -1,11 +1,16 @@
- #include "plant.hpp"
- 
-void Plant::render(RenderWindow &window)
+#include "plant.hpp"
+
+void Walnut::render()
 {
     if (!plant_texture.loadFromFile(PICS_PATH + pic_name))
     {
         cerr << "cant upload image!";
     }
     plant_sprite.setTexture(plant_texture);
-    window.draw(plant_sprite);
+    window_ptr->draw(plant_sprite);
 }
+void Walnut::adding_walnut()
+{
+    set_pic_name();
+    render();
+};
