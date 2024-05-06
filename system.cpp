@@ -16,15 +16,10 @@ void System::Add_plant(string plant_name)
     }
     else if (plant_name == "walnut")
     {
-        Vector2i a;
-        a.x = 100;
-        a.y = 200;
+
         // Walnut walnut(&window, Vector2i(100,200));
-        Walnut walnut(&window, a);
-        walnut.adding_walnut();
-        // Walnut *walnut = new Walnut(&window, Vector2i(100,200));
-        // plants.push_back(walnut);
-        cout << "hi" << endl;
+        Walnut *walnut = new Walnut(&window, Vector2i(1,2));
+        plants.push_back(walnut);
     }
 }
 
@@ -81,6 +76,9 @@ void System::render()
     {
     case (IN_GAME):
         window.draw(background_sprite);
+        for(auto plant: plants){
+            plant->render();
+        }
         // for(int)
         break;
     case (WIN_SCREEN):

@@ -1,8 +1,8 @@
 #include "plant.hpp"
 
-void Plant::render()
+void Walnut::render()
 {
-    if (!plant_texture.loadFromFile(PICS_PATH + pic_name))
+    if (!plant_texture.loadFromFile(PICS_PATH + "Wallnut_body.png"))
     {
         cerr << "cant upload image!";
     }
@@ -22,8 +22,28 @@ Sunflower::Sunflower(RenderWindow *_window_ptr, Vector2i _pos)
     pos = _pos;
 }
 
+void Sunflower::render()
+{
+    if (!plant_texture.loadFromFile(PICS_PATH + "Wallnut_body.png"))
+    {
+        cerr << "cant upload image!";
+    }
+    plant_sprite.setTexture(plant_texture);
+    window_ptr->draw(plant_sprite);
+}
+
 PeaShooter::PeaShooter(RenderWindow *_window_ptr, Vector2i _pos)
           :Plant(_window_ptr)
 {
     pos = _pos;
+}
+
+void PeaShooter::render()
+{
+    if (!plant_texture.loadFromFile(PICS_PATH + "Wallnut_body.png"))
+    {
+        cerr << "cant upload image!";
+    }
+    plant_sprite.setTexture(plant_texture);
+    window_ptr->draw(plant_sprite);
 }
