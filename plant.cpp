@@ -1,6 +1,6 @@
 #include "plant.hpp"
 
-void Walnut::render()
+void Plant::render()
 {
     if (!plant_texture.loadFromFile(PICS_PATH + pic_name))
     {
@@ -9,8 +9,21 @@ void Walnut::render()
     plant_sprite.setTexture(plant_texture);
     window_ptr->draw(plant_sprite);
 }
-void Walnut::adding_walnut()
+
+Walnut::Walnut(RenderWindow *_window_ptr, Vector2i _pos)
+      :Plant(_window_ptr)
+      {
+        pos = _pos;
+      }
+
+Sunflower::Sunflower(RenderWindow *_window_ptr, Vector2i _pos)
+         :Plant(_window_ptr)
 {
-    set_pic_name();
-    render();
-};
+    pos = _pos;
+}
+
+PeaShooter::PeaShooter(RenderWindow *_window_ptr, Vector2i _pos)
+          :Plant(_window_ptr)
+{
+    pos = _pos;
+}

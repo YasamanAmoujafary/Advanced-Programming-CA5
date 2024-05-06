@@ -3,7 +3,7 @@
 class Plant
 {
 public:
-    Plant(RenderWindow *_window_ptr, Vector2i _position) : window_ptr(_window_ptr), position(_position) {}
+    Plant(RenderWindow *_window_ptr) : window_ptr(_window_ptr){}
     virtual void render() = 0;
 
 protected:
@@ -12,7 +12,6 @@ protected:
     int health;
     // int id;
     string pic_name;
-    Vector2i position;
     int price;
     int cool_down;
     RenderWindow *window_ptr;
@@ -22,9 +21,28 @@ protected:
 class Walnut : public Plant
 {
 public:
-    Walnut(RenderWindow *_window, Vector2i _position) : Plant(_window, _position) {}
+    Walnut(RenderWindow *_window_ptr, Vector2i _pos);
     void set_pic_name() { pic_name = "Wallnut_body.png"; }
-    virtual void render();
-    void adding_walnut();
+    virtual void rend();
 private:
+    Vector2i pos;
+};
+
+class Sunflower : public Plant
+{
+public:
+    Sunflower(RenderWindow *_window_ptr, Vector2i _pos);
+    virtual void rend();
+
+private:
+    Vector2i pos;
+
+};
+
+class PeaShooter : public Plant
+{
+public:
+    PeaShooter(RenderWindow *_window_ptr, Vector2i _pos);
+private:
+    Vector2i pos;
 };
