@@ -13,12 +13,14 @@ void System::Add_plant(string plant_name)
     }
     else if (plant_name == "sunflower")
     {
+        Sunflower *sunflower = new Sunflower(&window, Vector2i(200,300));
+        plants.push_back(sunflower);
     }
     else if (plant_name == "walnut")
     {
 
         // Walnut walnut(&window, Vector2i(100,200));
-        Walnut *walnut = new Walnut(&window, Vector2i(1,2));
+        Walnut *walnut = new Walnut(&window, Vector2i(100,200));
         plants.push_back(walnut);
     }
 }
@@ -31,6 +33,7 @@ void System::run()
         render();
         handle_events();
         Add_plant("walnut");
+        Add_plant("sunflower");
     }
     exit(0);
 }
