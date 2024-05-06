@@ -10,6 +10,8 @@
 using namespace std;
 using namespace sf;
 
+const int WINDOW_LENGTH = 800;
+const int WINDOW_WIDTH = 600;
 const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
 
