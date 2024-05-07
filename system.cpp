@@ -2,35 +2,9 @@
 
 System::System(State _state)
 {
+    dragged_object = NULL;
     state = _state;
     set_background();
-}
-
-void System::Add_plant(string plant_name, int position_x, int position_y)
-{
-    if (plant_name == "peashooter")
-    {
-        PeaShooter *peashooter = new PeaShooter(&window, Vector2i(position_x, position_y));
-        plants.push_back(peashooter);
-    }
-    else if (plant_name == "snowpea")
-    {
-        Snowpea *snowpea = new Snowpea(&window, Vector2i(position_x, position_y));
-        plants.push_back(snowpea);
-    }
-    else if (plant_name == "kernelPult")
-    {
-    }
-    else if (plant_name == "sunflower")
-    {
-        Sunflower *sunflower = new Sunflower(&window, Vector2i(position_x, position_y));
-        plants.push_back(sunflower);
-    }
-    else if (plant_name == "walnut")
-    {
-        Walnut *walnut = new Walnut(&window, Vector2i(position_x, position_y));
-        plants.push_back(walnut);
-    }
 }
 
 void System::run()
@@ -50,6 +24,7 @@ void System::handle_events()
     Vector2i final_pos;
     while (window.pollEvent(event))
     {
+        bool pressed = false;
         switch (event.type)
         {
         case (Event::KeyPressed):
@@ -64,49 +39,32 @@ void System::handle_events()
             if (event.mouseButton.button == Mouse::Left)
             {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                for (int i = 0; i < plants.size(); i++)
+                if (mousePosition.x > 0 && mousePosition.x < ITEM_BAR_LENGTH)
                 {
-                    if (plants[i]->get_pos().x == 0)
+                    if (mousePosition.y > FIRST_ITEM_BAR_POS_Y && mousePosition.y < SECOND_ITEM_BAR_POS_Y)
                     {
-
-                        plants[i]->change_pos(mousePosition.x, mousePosition.y);
+                        dragged_object = new Sunflower(&window, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
                     }
                 }
             }
             break;
 
-            // Check if mouse button is released
-            // case (Event::MouseButtonReleased):
-            //     if (event.mouseButton.button == Mouse::Left)
-            //     {
-            //         final_pos = circle.getPosition();
-            //         std::cout << "Initial Position: (" << initial_pos.x << ", " << initial_pos.y << ")" << std::endl;
-            //         std::cout << "Final Position: (" << final_pos.x << ", " << final_pos.y << ")" << std::endl;
-            //         break;
-            //     }
+        case (Event::MouseButtonReleased):
+            if (event.mouseButton.button == Mouse::Left && dragged_object != NULL)
+            {
+                Vector2i mousePosition = Mouse::getPosition(window);
+                pair<Vector2i, bool> center_pos_and_if_in_board;
+                center_pos_and_if_in_board = get_center_block_position(mousePosition);
+                if (center_pos_and_if_in_board.second)
+                {
+                    dragged_object->change_pos(center_pos_and_if_in_board.first.x, center_pos_and_if_in_board.first.y);
+                    plants.push_back(dragged_object);
+                    dragged_object = NULL;
+                }
+                break;
+            }
         }
     }
-}
-void System ::which_item_selected()
-{
-    // not useful now but maybe later
-    // for(int i = 0; i < plants.size(); i++)
-    // {
-    //     if(plants[i]->get_pos().x == 0)
-    //     {
-    //         cout<<plants[i]->get_pos().y<endl;
-    //     }
-    // }
-
-    // Vector2i mousePosition = Mouse::getPosition(window);
-    //             if (circle1.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-    //                 cout << "You selected Circle 1!" << std::endl;
-    //             else if (circle2.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-    //                 std::cout << "You selected Circle 2!" << std::endl;
-    //             else if (circle3.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-    //                 std::cout << "You selected Circle 3!" << std::endl;
-    //             else
-    //                 std::cout << "You didn't select any object." << std::endl;
 }
 void System ::set_background()
 {
@@ -121,17 +79,29 @@ void System ::set_background()
         cerr << "cant upload image!";
     }
     item_bar_sprite.setTexture(item_bar_texture);
-    item_bar_sprite.setScale(1, 1);
-    item_bar_sprite.setPosition(0, 250);
-    Add_plant("walnut", 0, 350);
-    Add_plant("sunflower", 0, 250);
-    Add_plant("peashooter", 0, 450);
-    Add_plant("snowpea", 0, 550);
-    float scaleX = static_cast<float>(window.getSize().x) / background_texture.getSize().x;
-    float scaleY = static_cast<float>(window.getSize().y) / background_texture.getSize().y;
-    background_sprite.setScale(scaleX, scaleY);
-}
+    float scaleX = static_cast<float>(ITEM_BAR_LENGTH) / (item_bar_texture.getSize().x);
+    float scaleY = static_cast<float>(ITEM_BAR_WEIDTH) / (item_bar_texture.getSize().y);
+    item_bar_sprite.setScale(scaleX, scaleY);
+    item_bar_sprite.setPosition(0, 50);
 
+    adding_item_bar_objects();
+    // float scalex = static_cast<float>(window.getSize().x) / background_texture.getSize().x;
+    // float scaley = static_cast<float>(window.getSize().y) / background_texture.getSize().y;
+    // background_sprite.setScale(scalex, scaley);
+}
+void System::adding_item_bar_objects()
+{
+    PeaShooter *peashooter = new PeaShooter(&window, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
+    Snowpea *snowpea = new Snowpea(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+    Sunflower *sunflower = new Sunflower(&window, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
+    Walnut *walnut = new Walnut(&window, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
+    // Watermelon *watermelon = new Watermelon(&window, Vector2i(0, 450));
+    item_bar_objects.push_back(peashooter);
+    item_bar_objects.push_back(snowpea);
+    item_bar_objects.push_back(sunflower);
+    item_bar_objects.push_back(walnut);
+    // item_bar_objects.push_back(watermelon);
+}
 void System::render()
 {
     window.clear();
@@ -142,9 +112,13 @@ void System::render()
         window.draw(item_bar_sprite);
         for (auto plant : plants)
         {
-            plant->render();
+            plant->render(RECT_LENGTH, RECT_WEIDTH);
         }
-        // for(int)
+            cout<<plants.size()<<endl;
+        for (auto item_bar_object : item_bar_objects)
+        {
+            item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
+        }
         break;
     case (WIN_SCREEN):
         break;
@@ -160,8 +134,8 @@ void System::render()
 
 void System::make_map()
 {
-    vector<vector<pair<Vector2i, bool>>> tempMap(6);
-    vector<pair<Vector2i, bool>> temp_horizental(10);
+    vector<vector<pair<Vector2i, bool>>> tempMap(NUM_OF_VERTICAL_BLOCKS);
+    vector<pair<Vector2i, bool>> temp_horizental(NUM_OF_HORIZENTAL_BLOCKS);
     for (int i = 0; i < tempMap.size(); i++)
     {
         for (int j = 0; j < temp_horizental.size(); j++)
@@ -180,4 +154,38 @@ void System::make_map()
     //         cout<<(*Map)[i][j].first.x<<","<<(*Map)[i][j].first.y<<"and is: "<<(*Map)[i][j].second<<endl;
     //     }
     // }
+}
+
+pair<Vector2i, bool> System::get_center_block_position(Vector2i mouse_pos)
+{
+    Vector2i center_pos;
+    bool can_plant_object = false;
+    pair<Vector2i, bool> center_pos_and_if_in_board;
+    for (int i = 0; i < Map->size(); i++)
+    {
+        for (int j = 0; j < (*Map)[i].size(); j++)
+        {
+            if (mouse_pos.x < (*Map)[i][j].first.x + RECT_LENGTH && mouse_pos.x > (*Map)[i][j].first.x && mouse_pos.y < (*Map)[i][j].first.y + RECT_WEIDTH && mouse_pos.y > (*Map)[i][j].first.y)
+            {
+                if (mouse_pos.x <= PLAY_GROUND_LENGTH && mouse_pos.y <= PLAY_GROUND_WIDTH && (*Map)[i][j].second == false)
+                {
+                    center_pos.x = (*Map)[i][j].first.x;
+                    center_pos.y = (*Map)[i][j].first.y;
+                    (*Map)[i][j].second = true;
+                    can_plant_object = true;
+                }
+            }
+        }
+    }
+    center_pos_and_if_in_board.first = center_pos;
+    center_pos_and_if_in_board.second = can_plant_object;
+    // for (int i = 0; i < Map->size(); i++)
+    // {
+    //     for (int j = 0; j < (*Map)[i].size(); j++)
+    //     {
+    //         cout << (*Map)[i][j].first.x << "," << (*Map)[i][j].first.y << endl;
+    //     }
+    // }
+
+    return center_pos_and_if_in_board;
 }

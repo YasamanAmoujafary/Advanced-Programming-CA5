@@ -14,7 +14,6 @@ public:
     System(State _state);
     void run();
     //~System();
-    void Add_plant(string plant_name, int position_x, int position_y);
     void make_map();
 
 private:
@@ -23,6 +22,7 @@ private:
     int window_height;
     vector<Plant *> plants;
     vector<Plant *> item_bar_objects;
+    Plant* dragged_object;
     State state;
     Texture background_texture;
     Texture item_bar_texture;
@@ -32,6 +32,8 @@ private:
     // void update();
     void render();
     void handle_events();
-    void which_item_selected();
     void set_background();
+    void adding_item_bar_objects();
+    pair<Vector2i,bool> get_center_block_position(Vector2i mouse_pos);
+
 };
