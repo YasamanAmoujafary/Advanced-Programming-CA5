@@ -15,6 +15,7 @@ public:
     void run();
     //~System();
     void Add_plant(string plant_name, int position_x, int position_y);
+    void make_map();
 
 private:
     RenderWindow window;
@@ -27,6 +28,7 @@ private:
     Texture item_bar_texture;
     Sprite background_sprite;
     Sprite item_bar_sprite;
+    vector<vector<pair<Vector2i,bool>>> *Map;
     // void update();
     void render();
     void handle_events();

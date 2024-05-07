@@ -62,13 +62,12 @@ Snowpea::Snowpea(RenderWindow *_window_ptr, Vector2i _pos)
 
 void Snowpea::render()
 {
-    // find a good pic for this until then i will not push it in plants
     if (!plant_texture.loadFromFile(PICS_PATH + "snowpea.png"))
     {
         cerr << "cant upload image!";
     }
     plant_sprite.setTexture(plant_texture);
-    plant_sprite.setScale(1,1);
+    plant_sprite.setScale(0.2,0.2);
     plant_sprite.setPosition(pos.x, pos.y);
     window_ptr->draw(plant_sprite);
 }

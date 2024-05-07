@@ -1,4 +1,5 @@
 #include "system.hpp"
+
 System::System(State _state)
 {
     state = _state;
@@ -14,9 +15,8 @@ void System::Add_plant(string plant_name, int position_x, int position_y)
     }
     else if (plant_name == "snowpea")
     {
-        // go find good pic
-        // Snowpea *snowpea = new Snowpea(&window, Vector2i(position_x, position_y));
-        // plants.push_back(snowpea);
+        Snowpea *snowpea = new Snowpea(&window, Vector2i(position_x, position_y));
+        plants.push_back(snowpea);
     }
     else if (plant_name == "kernelPult")
     {
@@ -63,7 +63,7 @@ void System::handle_events()
         case (Event::MouseButtonPressed):
             if (event.mouseButton.button == Mouse::Left)
             {
-                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                Vector2i mousePosition = Mouse::getPosition(window);
                 for (int i = 0; i < plants.size(); i++)
                 {
                     if (plants[i]->get_pos().x == 0)
@@ -156,4 +156,28 @@ void System::render()
         break;
     }
     window.display();
+}
+
+void System::make_map()
+{
+    vector<vector<pair<Vector2i, bool>>> tempMap(6);
+    vector<pair<Vector2i, bool>> temp_horizental(10);
+    for (int i = 0; i < tempMap.size(); i++)
+    {
+        for (int j = 0; j < temp_horizental.size(); j++)
+        {
+            temp_horizental[j].first.x = BLOCK_TOP_LEFT_CORNER_X + j * RECT_LENGTH;
+            temp_horizental[j].first.y = BLOCK_TOP_LEFT_CORNER_Y + i * RECT_WEIDTH;
+            temp_horizental[j].second = false;
+        }
+        tempMap[i] = temp_horizental;
+    }
+    Map = new vector<vector<pair<Vector2i, bool>>>(tempMap);
+    //    for(int i = 0; i < Map->size(); i++)
+    // {
+    //     for(int j = 0; j <(*Map)[i].size(); j++)
+    //     {
+    //         cout<<(*Map)[i][j].first.x<<","<<(*Map)[i][j].first.y<<"and is: "<<(*Map)[i][j].second<<endl;
+    //     }
+    // }
 }
