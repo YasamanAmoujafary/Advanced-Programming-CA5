@@ -4,6 +4,7 @@ Walnut::Walnut(RenderWindow *_window_ptr, Vector2i _pos)
     : Plant(_window_ptr)
 {
     pos = _pos;
+    plant_name = "walnut";
 }
 void Walnut::render(int bg_pos_x, int bg_pos_y)
 {
@@ -23,6 +24,7 @@ Sunflower::Sunflower(RenderWindow *_window_ptr, Vector2i _pos)
     : Plant(_window_ptr)
 {
     pos = _pos;
+    plant_name = "sunflower";
 }
 
 void Sunflower::render(int bg_pos_x, int bg_pos_y)
@@ -43,6 +45,7 @@ PeaShooter::PeaShooter(RenderWindow *_window_ptr, Vector2i _pos)
     : Plant(_window_ptr)
 {
     pos = _pos;
+    plant_name = "peashooter";
 }
 
 void PeaShooter::render(int bg_pos_x, int bg_pos_y)
@@ -63,6 +66,7 @@ Snowpea::Snowpea(RenderWindow *_window_ptr, Vector2i _pos)
     : Plant(_window_ptr)
 {
     pos = _pos;
+    plant_name = "snowpea";
 }
 
 void Snowpea::render(int bg_pos_x, int bg_pos_y)
@@ -83,6 +87,7 @@ Watermelon::Watermelon(RenderWindow *_window_ptr, Vector2i _pos)
     : Plant(_window_ptr)
 {
     pos = _pos;
+    plant_name = "watermelon";
 }
 
 void Watermelon::render(int bg_pos_x, int bg_pos_y)
@@ -98,6 +103,3 @@ void Watermelon::render(int bg_pos_x, int bg_pos_y)
     plant_sprite.setPosition(pos.x, pos.y);
     window_ptr->draw(plant_sprite);
 }
-
-
-

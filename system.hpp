@@ -22,18 +22,18 @@ private:
     int window_height;
     vector<Plant *> plants;
     vector<Plant *> item_bar_objects;
-    Plant* dragged_object;
+    Plant *dragged_object;
     State state;
     Texture background_texture;
     Texture item_bar_texture;
     Sprite background_sprite;
     Sprite item_bar_sprite;
-    vector<vector<pair<Vector2i,bool>>> *Map;
-    // void update();
+    vector<vector<pair<Vector2i, bool>>> *Map;
+    bool is_bar_item_planted;
+    void update();
     void render();
     void handle_events();
     void set_background();
     void adding_item_bar_objects();
-    pair<Vector2i,bool> get_center_block_position(Vector2i mouse_pos);
-
+    pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
 };

@@ -32,8 +32,12 @@ const int NUM_OF_VERTICAL_BLOCKS = 6;
 const int NUM_OF_HORIZENTAL_BLOCKS = 10;
 const int PLAY_GROUND_LENGTH = 980;
 const int PLAY_GROUND_WIDTH = 570;
+const string PATH_GAME_SETTING = "./GameSetting.csv";
 const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
+const char TYPE_DELIMETER = ',';
+const char INTRO_DELIMETER = ':';
+const char DATA_DELIMETER = '-';
 
 
 #endif

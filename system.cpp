@@ -6,17 +6,30 @@ System::System(State _state)
     state = _state;
     set_background();
 }
-
 void System::run()
 {
+    is_bar_item_planted = false;
     while (window.isOpen() && state != EXIT)
     {
-        // update();
+        update();
         render();
         handle_events();
     }
     exit(0);
 }
+void System::update()
+{
+//     if (is_bar_item_planted)
+//     {
+//         is_bar_item_planted = false;
+//         string plant_name = plants[plants.size()-1]->get_plant_name();
+//             if(plant_name == "sunflower")
+//             {
+//                 cool_down_sunflower
+//             }
+
+//     }
+// }
 void System::handle_events()
 {
     Event event;
@@ -59,6 +72,7 @@ void System::handle_events()
                 {
                     dragged_object->change_pos(center_pos_and_if_in_board.first.x, center_pos_and_if_in_board.first.y);
                     plants.push_back(dragged_object);
+                    is_bar_item_planted = true;
                     dragged_object = NULL;
                 }
                 break;
@@ -114,11 +128,19 @@ void System::render()
         {
             plant->render(RECT_LENGTH, RECT_WEIDTH);
         }
-            cout<<plants.size()<<endl;
         for (auto item_bar_object : item_bar_objects)
         {
             item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
         }
+        // for (auto plant : plants)
+        // {
+        //     Sprite p;
+        //     p = plant->get_plant_sprite();
+        //     p.setPosition(plant->get_pos().x, plant->get_pos().y);
+        //     window.draw(p);
+        //     p.move(100, 0);
+        //     window.draw(p);
+        // }
         break;
     case (WIN_SCREEN):
         break;
