@@ -22,6 +22,7 @@ private:
     int window_height;
     vector<Plant *> plants;
     vector<Plant *> item_bar_objects;
+    vector<Plant *> cool_downed_objects;
     Plant *dragged_object;
     State state;
     Texture background_texture;

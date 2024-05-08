@@ -19,17 +19,21 @@ void System::run()
 }
 void System::update()
 {
-//     if (is_bar_item_planted)
-//     {
-//         is_bar_item_planted = false;
-//         string plant_name = plants[plants.size()-1]->get_plant_name();
-//             if(plant_name == "sunflower")
-//             {
-//                 cool_down_sunflower
-//             }
+    if (is_bar_item_planted)
+    {
+        is_bar_item_planted = false;
+        string plant_name = plants[plants.size() - 1]->get_plant_name();
 
-//     }
- }
+        if (plant_name == "sunflower")
+        {
+            if (plants[plants.size() - 1]->is_in_cooldown())
+            {
+                Sunflower *sunflower = new Sunflower(&window,SUNFLOWER_COOLDOWN_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
+                cool_downed_objects.push_back(sunflower);
+            }
+        }
+    }
+}
 void System::handle_events()
 {
     Event event;
@@ -56,23 +60,23 @@ void System::handle_events()
                 {
                     if (mousePosition.y > FIRST_ITEM_BAR_POS_Y && mousePosition.y < SECOND_ITEM_BAR_POS_Y)
                     {
-                        dragged_object = new Sunflower(&window, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
+                        dragged_object = new Sunflower(&window, SUNFLOWER_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
                     }
-                    else if(mousePosition.y > SECOND_ITEM_BAR_POS_Y && mousePosition.y < THIRD_ITEM_BAR_POS_Y)
+                    else if (mousePosition.y > SECOND_ITEM_BAR_POS_Y && mousePosition.y < THIRD_ITEM_BAR_POS_Y)
                     {
-                        dragged_object = new Walnut(&window, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
+                        dragged_object = new Walnut(&window, WALLNUT_PNG, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
                     }
-                    else if(mousePosition.y > THIRD_ITEM_BAR_POS_Y && mousePosition.y < FORTH_ITEM_BAR_POS_Y)
+                    else if (mousePosition.y > THIRD_ITEM_BAR_POS_Y && mousePosition.y < FORTH_ITEM_BAR_POS_Y)
                     {
-                        dragged_object = new PeaShooter(&window, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
+                        dragged_object = new PeaShooter(&window, PEASHOOTER_PNG, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
                     }
-                    else if(mousePosition.y > FORTH_ITEM_BAR_POS_Y && mousePosition.y < FIFTH_ITEM_BAR_POS_Y)
+                    else if (mousePosition.y > FORTH_ITEM_BAR_POS_Y && mousePosition.y < FIFTH_ITEM_BAR_POS_Y)
                     {
-                        dragged_object = new Snowpea(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+                        dragged_object = new Snowpea(&window, SNOWPEA_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
                     }
-                    else if(mousePosition.y > FIFTH_ITEM_BAR_POS_Y && mousePosition.y < ITEM_BAR_WEIDTH + FIRST_ITEM_BAR_POS_Y)
+                    else if (mousePosition.y > FIFTH_ITEM_BAR_POS_Y && mousePosition.y < ITEM_BAR_WEIDTH + FIRST_ITEM_BAR_POS_Y)
                     {
-                        dragged_object = new Watermelon(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+                        dragged_object = new Watermelon(&window, WATERMELON_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
                     }
                 }
             }
@@ -121,11 +125,11 @@ void System ::set_background()
 }
 void System::adding_item_bar_objects()
 {
-    PeaShooter *peashooter = new PeaShooter(&window, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
-    Snowpea *snowpea = new Snowpea(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
-    Sunflower *sunflower = new Sunflower(&window, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
-    Walnut *walnut = new Walnut(&window, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
-    Watermelon *watermelon = new Watermelon(&window, Vector2i(0, 450));
+    PeaShooter *peashooter = new PeaShooter(&window, PEASHOOTER_PNG, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
+    Snowpea *snowpea = new Snowpea(&window, SNOWPEA_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+    Sunflower *sunflower = new Sunflower(&window, SUNFLOWER_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
+    Walnut *walnut = new Walnut(&window, WALLNUT_PNG, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
+    Watermelon *watermelon = new Watermelon(&window, WATERMELON_PNG, Vector2i(0, FIFTH_ITEM_BAR_POS_Y));
     item_bar_objects.push_back(peashooter);
     item_bar_objects.push_back(snowpea);
     item_bar_objects.push_back(sunflower);
@@ -148,6 +152,16 @@ void System::render()
         {
             item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
         }
+        for (auto cool_downed_object : cool_downed_objects)
+        {
+            cool_downed_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
+        }
+        for (int i = 0; i < cool_downed_objects.size(); i++)
+        {
+            cool_downed_objects.erase(cool_downed_objects.begin()+i);
+            delete cool_downed_objects[i];
+        }
+
         // for (auto plant : plants)
         // {
         //     Sprite p;

@@ -38,6 +38,18 @@ const string MUSIC_PATH = "./music/";
 const char TYPE_DELIMETER = ',';
 const char INTRO_DELIMETER = ':';
 const char DATA_DELIMETER = '-';
+const string SUNFLOWER_PNG = "Sunflower.png";
+const string WALLNUT_PNG = "Wallnut_body.png";
+const string PEASHOOTER_PNG = "Peashooter.png";
+const string SNOWPEA_PNG = "snowpea.png";
+const string WATERMELON_PNG = "watermelon.png";
+const string SUNFLOWER_COOLDOWN_PNG = "Sunflower_cooldown.png";
+const string WALLNUT_COOLDOWN_PNG = "Walnut_cooldown.png";
+const string PEASHOOTER_COOLDOWN_PNG = "Peashooter_cooldown.png";
+const string SNOWPEA_COOLDOWN_PNG = "snowpea_cooldown.png";
+const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
+
+
 
 
 #endif
