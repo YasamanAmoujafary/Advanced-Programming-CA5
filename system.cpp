@@ -29,7 +29,7 @@ void System::update()
 //             }
 
 //     }
-// }
+ }
 void System::handle_events()
 {
     Event event;
@@ -57,6 +57,22 @@ void System::handle_events()
                     if (mousePosition.y > FIRST_ITEM_BAR_POS_Y && mousePosition.y < SECOND_ITEM_BAR_POS_Y)
                     {
                         dragged_object = new Sunflower(&window, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
+                    }
+                    else if(mousePosition.y > SECOND_ITEM_BAR_POS_Y && mousePosition.y < THIRD_ITEM_BAR_POS_Y)
+                    {
+                        dragged_object = new Walnut(&window, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
+                    }
+                    else if(mousePosition.y > THIRD_ITEM_BAR_POS_Y && mousePosition.y < FORTH_ITEM_BAR_POS_Y)
+                    {
+                        dragged_object = new PeaShooter(&window, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
+                    }
+                    else if(mousePosition.y > FORTH_ITEM_BAR_POS_Y && mousePosition.y < FIFTH_ITEM_BAR_POS_Y)
+                    {
+                        dragged_object = new Snowpea(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+                    }
+                    else if(mousePosition.y > FIFTH_ITEM_BAR_POS_Y && mousePosition.y < ITEM_BAR_WEIDTH + FIRST_ITEM_BAR_POS_Y)
+                    {
+                        dragged_object = new Watermelon(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
                     }
                 }
             }
@@ -109,12 +125,12 @@ void System::adding_item_bar_objects()
     Snowpea *snowpea = new Snowpea(&window, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
     Sunflower *sunflower = new Sunflower(&window, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
     Walnut *walnut = new Walnut(&window, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
-    // Watermelon *watermelon = new Watermelon(&window, Vector2i(0, 450));
+    Watermelon *watermelon = new Watermelon(&window, Vector2i(0, 450));
     item_bar_objects.push_back(peashooter);
     item_bar_objects.push_back(snowpea);
     item_bar_objects.push_back(sunflower);
     item_bar_objects.push_back(walnut);
-    // item_bar_objects.push_back(watermelon);
+    item_bar_objects.push_back(watermelon);
 }
 void System::render()
 {
