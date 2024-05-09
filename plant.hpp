@@ -1,4 +1,5 @@
-#include "utilities.hpp"
+//#include "utilities.hpp"
+#include "projectile.hpp"
 
 class Plant
 {
@@ -6,16 +7,11 @@ public:
     Plant(RenderWindow *_window_ptr, string _plant_png_path) : window_ptr(_window_ptr)
     {
         plant_png_path = _plant_png_path;
-        vector<int> file_data;
-        file_data = read_from_file(2, 5);
-        damage = file_data[0];
-        health = file_data[1];
-        cooldown = file_data[2];
-        hit_rate = file_data[3];
-        speed = file_data[4];
-        price = file_data[5];
+        is_in_cooldown = false; 
     }
     virtual void render(int bg_pos_x, int bg_pos_y) = 0;
+    virtual void set_normal_plant_png() = 0;
+    virtual void set_cool_downed_plant_png() = 0;
     Vector2i get_pos() { return pos; }
     Sprite get_plant_sprite() { return plant_sprite; }
     void change_pos(int x, int y)
@@ -27,37 +23,36 @@ public:
     // void set_time() { plantElapsed = plantClock.getElapsedTime(); };
     // int get_cooldown() { return cooldown; }
     // Time get_plant_elapsed() { return plantElapsed; }
-    bool is_in_cooldown()
+    void start_timer()
     {
-        plantElapsed = plantClock.getElapsedTime();
-        // upload the gray pics
-        if (cooldown > plantElapsed.asSeconds())
+        // plantElapsed = plantClock.getElapsedTime();
+        plantClock.restart();
+    }
+    void update_cooldown()
+    {
+         plantElapsed = plantClock.getElapsedTime();
+        if (cooldown <= plantElapsed.asSeconds())
         {
-            // pop_back_the_gray_pic
-            return true;
-        }
-        else
-        {
-            plantClock.restart();
-            return false;
+            is_in_cooldown = false;
         }
     }
+    bool get_is_in_cooldown(){return is_in_cooldown;}
+    void change_is_in_cooldown(){is_in_cooldown = true;}
 
 protected:
     Texture plant_texture;
     Sprite plant_sprite;
     int health;
-    int damage;
     string plant_name;
     string plant_png_path;
     int price;
     int cooldown;
-    int speed;
     int hit_rate;
+    bool is_in_cooldown;
     RenderWindow *window_ptr;
     Time plantElapsed;
     Clock plantClock;
-    // void update();
+    //virtual void update();
     Vector2i pos;
 };
 
@@ -65,10 +60,12 @@ class Walnut : public Plant
 {
 public:
     Walnut(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos);
-    // void set_pic_name() { pic_name = "Wallnut_body.png"; }
+    void set_normal_plant_png() { plant_png_path = WALLNUT_PNG; }
+    void set_cool_downed_plant_png() { plant_png_path = WALLNUT_COOLDOWN_PNG; }
     void render(int bg_pos_x, int bg_pos_y);
 
 private:
+    //void update();
 };
 
 class Sunflower : public Plant
@@ -76,8 +73,11 @@ class Sunflower : public Plant
 public:
     Sunflower(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos);
     void render(int bg_pos_x, int bg_pos_y);
+    void set_normal_plant_png() { plant_png_path = SUNFLOWER_PNG; }
+    void set_cool_downed_plant_png() { plant_png_path = SUNFLOWER_COOLDOWN_PNG; }
 
 private:
+    //void update();
 };
 
 class PeaShooter : public Plant
@@ -85,8 +85,11 @@ class PeaShooter : public Plant
 public:
     PeaShooter(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos);
     void render(int bg_pos_x, int bg_pos_y);
+    void set_normal_plant_png() { plant_png_path = PEASHOOTER_PNG; }
+    void set_cool_downed_plant_png() { plant_png_path = PEASHOOTER_COOLDOWN_PNG; }
 
 private:
+    //void update();
 };
 
 class Snowpea : public Plant
@@ -94,8 +97,11 @@ class Snowpea : public Plant
 public:
     Snowpea(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos);
     void render(int bg_pos_x, int bg_pos_y);
+    void set_normal_plant_png() { plant_png_path = SNOWPEA_PNG; }
+    void set_cool_downed_plant_png() { plant_png_path = SNOWPEA_COOLDOWN_PNG; }
 
 private:
+    //void update();
 };
 
 class Watermelon : public Plant
@@ -103,6 +109,9 @@ class Watermelon : public Plant
 public:
     Watermelon(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos);
     void render(int bg_pos_x, int bg_pos_y);
+    void set_normal_plant_png() { plant_png_path = WATERMELON_PNG; }
+    void set_cool_downed_plant_png() { plant_png_path = WATERMELON_COOLDOWN_PNG; }
 
 private:
+    //void update();
 };

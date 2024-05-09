@@ -48,6 +48,7 @@ const string WALLNUT_COOLDOWN_PNG = "Walnut_cooldown.png";
 const string PEASHOOTER_COOLDOWN_PNG = "Peashooter_cooldown.png";
 const string SNOWPEA_COOLDOWN_PNG = "snowpea_cooldown.png";
 const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
+const string REGULAR_PROJECTILE_PNG = "regular_projectile";
 
 
 

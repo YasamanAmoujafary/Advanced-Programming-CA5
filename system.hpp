@@ -23,6 +23,7 @@ private:
     vector<Plant *> plants;
     vector<Plant *> item_bar_objects;
     vector<Plant *> cool_downed_objects;
+    vector<Projectile *> projectiles;
     Plant *dragged_object;
     State state;
     Texture background_texture;
@@ -30,10 +31,11 @@ private:
     Sprite background_sprite;
     Sprite item_bar_sprite;
     vector<vector<pair<Vector2i, bool>>> *Map;
-    bool is_bar_item_planted;
     void update();
     void render();
     void handle_events();
+    void handle_cooldown();
+    void handle_plant_updates();
     void set_background();
     void adding_item_bar_objects();
     pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);

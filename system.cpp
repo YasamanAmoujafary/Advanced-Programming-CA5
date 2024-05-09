@@ -8,7 +8,6 @@ System::System(State _state)
 }
 void System::run()
 {
-    is_bar_item_planted = false;
     while (window.isOpen() && state != EXIT)
     {
         update();
@@ -17,22 +16,39 @@ void System::run()
     }
     exit(0);
 }
-void System::update()
-{
-    if (is_bar_item_planted)
-    {
-        is_bar_item_planted = false;
-        string plant_name = plants[plants.size() - 1]->get_plant_name();
 
-        if (plant_name == "sunflower")
+void System::handle_cooldown()
+{
+    for (auto item_bar_object : item_bar_objects)
+    {
+        if (item_bar_object->get_is_in_cooldown())
+            item_bar_object->update_cooldown();
+    }
+    for (auto item_bar_object : item_bar_objects)
+    {
+        if (item_bar_object->get_is_in_cooldown())
         {
-            if (plants[plants.size() - 1]->is_in_cooldown())
-            {
-                Sunflower *sunflower = new Sunflower(&window,SUNFLOWER_COOLDOWN_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
-                cool_downed_objects.push_back(sunflower);
-            }
+            item_bar_object->set_cool_downed_plant_png();
+        }
+        else
+        {
+            item_bar_object->set_normal_plant_png();
         }
     }
+}
+
+void System::handle_plant_updates()
+{
+      for (auto plant : plants)
+    {
+        //plant->update(projectiles);
+    }
+}
+
+void System::update()
+{
+    handle_cooldown();
+    handle_plant_updates();
 }
 void System::handle_events()
 {
@@ -91,8 +107,15 @@ void System::handle_events()
                 if (center_pos_and_if_in_board.second)
                 {
                     dragged_object->change_pos(center_pos_and_if_in_board.first.x, center_pos_and_if_in_board.first.y);
-                    plants.push_back(dragged_object);
-                    is_bar_item_planted = true;
+                    for (auto item_bar_object : item_bar_objects)
+                    {
+                        if (item_bar_object->get_plant_name() == dragged_object->get_plant_name() && !item_bar_object->get_is_in_cooldown())
+                        {
+                            item_bar_object->start_timer();
+                            item_bar_object->change_is_in_cooldown();
+                            plants.push_back(dragged_object);
+                        }
+                    }
                     dragged_object = NULL;
                 }
                 break;
@@ -151,15 +174,6 @@ void System::render()
         for (auto item_bar_object : item_bar_objects)
         {
             item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
-        }
-        for (auto cool_downed_object : cool_downed_objects)
-        {
-            cool_downed_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
-        }
-        for (int i = 0; i < cool_downed_objects.size(); i++)
-        {
-            cool_downed_objects.erase(cool_downed_objects.begin()+i);
-            delete cool_downed_objects[i];
         }
 
         // for (auto plant : plants)
