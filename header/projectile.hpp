@@ -1,5 +1,7 @@
+#pragma once
 // #include "plant.hpp"
-#include "utilities.hpp"
+//#include "utilities.hpp"
+#include "zombie.hpp"
 
 class Projectile
 {
@@ -13,17 +15,20 @@ public:
         projectile_sprite.setTexture(projectile_texture);
         projectile_sprite.setScale(0.018, 0.018);
     }
+    Vector2i get_pos(){return pos;}
     void render();
     void update();
+    string get_name() {return projectile_name;}
 
 protected:
     int damage;
     int speed;
+    string projectile_name;
     RenderWindow *window_ptr;
     Texture projectile_texture;
     Sprite projectile_sprite;
     Vector2i pos;
-    // Clock clock;
+    Clock projectile_clock;
 };
 
 class Regular_projectile : public Projectile
@@ -37,7 +42,7 @@ private:
 class Snow_projectile : public Projectile
 {
 public:
-    Snow_projectile(RenderWindow *_window_ptr, Vector2i _pos, string projectile_type_png);
+    Snow_projectile(RenderWindow *_window_ptr,Vector2i _pos, string projectile_type_png);
 
 private:
 };

@@ -50,6 +50,9 @@ const string SNOW_PEASHOOTER_COOLDOWN_PNG = "snowpeashooter_cooldown.png";
 const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
 const string REGULAR_PROJECTILE_PNG = "regular_projectile.png";
 const string SNOW_PROJECTILE_PNG= "snow_projectile.png";
+const string REGULAR_PROJECTILE_NAME = "regular_projectile";
+const string SNOW_PROJECTILE_NAME = "snow_projectile";
+
 
 
 

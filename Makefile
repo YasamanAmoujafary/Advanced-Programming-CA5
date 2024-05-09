@@ -1,25 +1,22 @@
-CC := g++ -std=c++20
-CCFLAGS += -lsfml-graphics -lsfml-window -lsfml-system
-all: pvz.out
+GPP = g++
+GPPFLAGS = -std=c++2a -Wall -Wextra -I./header
+LFLAGS = -L/files -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+SRC_DIR = src
+OBJ_DIR = obj
+EXES = ./pvz.out
+MEDIA_PATH = ./images/
 
-pvz.out: main.o system.o plant.o utilities.o projectile.o
-	$(CC) -o pvz.out main.o system.o plant.o utilities.o projectile.o $(CCFLAGS) -o pvz.out
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
+OBJECTS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
+ 
+clean:  all
+	rm -rf $(OBJ_DIR)/*.o
 
-main.o: main.cpp system.hpp
-	$(CC) -c main.cpp -o main.o
+all : $(EXES)
 
-system.o: system.cpp system.hpp plant.cpp plant.hpp
-	$(CC) -c system.cpp -o system.o
+$(EXES) : $(OBJECTS)
+	$(GPP) $(GPPFLAGS) -o $@ $^ $(LFLAGS)
 
-plant.o: plant.cpp plant.hpp projectile.cpp
-	$(CC) -c plant.cpp -o plant.o
-
-utilities.o: utilities.cpp utilities.hpp
-	$(CC) -c utilities.cpp -o utilities.o
-
-projectile.o: projectile.cpp projectile.hpp utilities.cpp
-	$(CC) -c projectile.cpp -o projectile.o
-
-clean:
-	rm *.o
-	rm pvz.out
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/*.hpp)
+	mkdir -p $(OBJ_DIR)
+	$(GPP) $(GPPFLAGS) -c $< -o $@ -I$(MEDIA_PATH)

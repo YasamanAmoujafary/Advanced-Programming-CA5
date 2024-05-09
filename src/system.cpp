@@ -11,8 +11,8 @@ void System::run()
     while (window.isOpen() && state != EXIT)
     {
         update();
-        render();
         handle_events();
+        render();
     }
     exit(0);
 }

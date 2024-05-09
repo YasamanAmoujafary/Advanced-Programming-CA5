@@ -1,3 +1,4 @@
+#pragma once
 #include "plant.hpp"
 
 enum State
@@ -24,6 +25,7 @@ private:
     vector<Plant *> item_bar_objects;
     vector<Plant *> cool_downed_objects;
     vector<Projectile *> projectiles;
+    vector<Zombie *> zombies;
     Plant *dragged_object;
     State state;
     Texture background_texture;
