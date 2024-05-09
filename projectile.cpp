@@ -1,15 +1,5 @@
 #include "projectile.hpp"
 
-Projectile::Projectile(RenderWindow *_window_ptr, string projectile_type_png)
-{
-    window_ptr = _window_ptr;
-    if (!projectile_texture.loadFromFile(PICS_PATH + projectile_type_png))
-    {
-        cerr << "cant upload image!";
-    }
-    projectile_sprite.setTexture(projectile_texture);
-    projectile_sprite.setScale(1, 1);
-}
 
 void Projectile::render()
 {

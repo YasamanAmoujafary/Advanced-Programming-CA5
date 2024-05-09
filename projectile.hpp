@@ -1,10 +1,18 @@
-//#include "plant.hpp"
+// #include "plant.hpp"
 #include "utilities.hpp"
 
 class Projectile
 {
 public:
-    Projectile(RenderWindow *_window_ptr, string projectile_type_png);
+    Projectile(RenderWindow *_window_ptr, string projectile_type_png) : window_ptr(_window_ptr)
+    {
+        if (!projectile_texture.loadFromFile(PICS_PATH + projectile_type_png))
+        {
+            cerr << "cant upload image!";
+        }
+        projectile_sprite.setTexture(projectile_texture);
+        projectile_sprite.setScale(0.018, 0.018);
+    }
     void render();
     void update();
 

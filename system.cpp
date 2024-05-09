@@ -37,18 +37,17 @@ void System::handle_cooldown()
     }
 }
 
-void System::handle_plant_updates()
-{
-      for (auto plant : plants)
-    {
-        //plant->update(projectiles);
-    }
-}
-
 void System::update()
 {
     handle_cooldown();
-    handle_plant_updates();
+    for (auto plant : plants)
+    {
+        plant->update(projectiles);
+    }
+    for (auto projectile : projectiles)
+    {
+        projectile->update();
+    }
 }
 void System::handle_events()
 {
@@ -88,7 +87,7 @@ void System::handle_events()
                     }
                     else if (mousePosition.y > FORTH_ITEM_BAR_POS_Y && mousePosition.y < FIFTH_ITEM_BAR_POS_Y)
                     {
-                        dragged_object = new Snowpea(&window, SNOWPEA_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+                        dragged_object = new SnowPeaShooter(&window, SNOW_PEASHOOTER_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
                     }
                     else if (mousePosition.y > FIFTH_ITEM_BAR_POS_Y && mousePosition.y < ITEM_BAR_WEIDTH + FIRST_ITEM_BAR_POS_Y)
                     {
@@ -149,12 +148,12 @@ void System ::set_background()
 void System::adding_item_bar_objects()
 {
     PeaShooter *peashooter = new PeaShooter(&window, PEASHOOTER_PNG, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
-    Snowpea *snowpea = new Snowpea(&window, SNOWPEA_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+    SnowPeaShooter *snowpeashooter = new SnowPeaShooter(&window, SNOW_PEASHOOTER_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
     Sunflower *sunflower = new Sunflower(&window, SUNFLOWER_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
     Walnut *walnut = new Walnut(&window, WALLNUT_PNG, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
     Watermelon *watermelon = new Watermelon(&window, WATERMELON_PNG, Vector2i(0, FIFTH_ITEM_BAR_POS_Y));
     item_bar_objects.push_back(peashooter);
-    item_bar_objects.push_back(snowpea);
+    item_bar_objects.push_back(snowpeashooter);
     item_bar_objects.push_back(sunflower);
     item_bar_objects.push_back(walnut);
     item_bar_objects.push_back(watermelon);
@@ -174,6 +173,10 @@ void System::render()
         for (auto item_bar_object : item_bar_objects)
         {
             item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
+        }
+        for (auto projectile : projectiles)
+        {
+            projectile->render();
         }
 
         // for (auto plant : plants)

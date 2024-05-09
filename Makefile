@@ -2,8 +2,8 @@ CC := g++ -std=c++20
 CCFLAGS += -lsfml-graphics -lsfml-window -lsfml-system
 all: pvz.out
 
-pvz.out: main.o system.o plant.o utilities.o
-	$(CC) -o pvz.out main.o system.o plant.o utilities.o $(CCFLAGS) -o pvz.out
+pvz.out: main.o system.o plant.o utilities.o projectile.o
+	$(CC) -o pvz.out main.o system.o plant.o utilities.o projectile.o $(CCFLAGS) -o pvz.out
 
 main.o: main.cpp system.hpp
 	$(CC) -c main.cpp -o main.o
