@@ -7,7 +7,7 @@ void Projectile::render()
 
 void Projectile::update()
 {
-    if (projectile_clock.getElapsedTime().asMilliseconds() > 10)
+    if (projectile_clock.getElapsedTime().asMilliseconds() > 20)
     {
         projectile_clock.restart();
         pos.x += speed*10; // implement time;

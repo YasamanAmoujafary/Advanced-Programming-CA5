@@ -52,7 +52,6 @@ const string REGULAR_PROJECTILE_PNG = "regular_projectile.png";
 const string SNOW_PROJECTILE_PNG= "snow_projectile.png";
 const string REGULAR_PROJECTILE_NAME = "regular_projectile";
 const string SNOW_PROJECTILE_NAME = "snow_projectile";
-const string REGULAR_ZOMBIE_PNG = "regular_zombie";
 
 
 
