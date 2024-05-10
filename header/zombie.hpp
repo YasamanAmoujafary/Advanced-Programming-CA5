@@ -5,10 +5,11 @@ class Zombie
 {
 public:
     Zombie(RenderWindow *_window_ptr) : window_ptr(_window_ptr){
-
+        
     }
     void render();
     virtual void update() = 0;
+    int get_pos_x(){return zombie_pos.x;}
 
 protected:
     Texture zombie_texture;
@@ -19,12 +20,13 @@ protected:
     int damage;
     int speed;
     int hit_rate;
+    int row;
 };
 
 class NormalZombie : public Zombie
 {
 public:
-    NormalZombie(RenderWindow *_window_ptr, Vector2i _pos);
+    NormalZombie(RenderWindow *_window_ptr, Vector2i _pos, int _row);
     // void render();
     void update();
 private:

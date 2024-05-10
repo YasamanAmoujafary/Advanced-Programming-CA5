@@ -29,11 +29,21 @@ const int SECOND_ITEM_BAR_POS_Y = 150;
 const int THIRD_ITEM_BAR_POS_Y = 250;
 const int FORTH_ITEM_BAR_POS_Y = 350;
 const int FIFTH_ITEM_BAR_POS_Y = 450;
+
+const int FIRST_BLOCK_TOP_POS_Y = 70;
+const int SECOND_BLOCK_TOP_POS_Y = 170;
+const int THIRD_BLOCK_TOP_POS_Y = 270;
+const int FORTH_BLOCK_TOP_POS_Y = 370;
+const int FIFTH_BLOCK_TOP_POS_Y = 470;
+const int FIFTH_BLOCK_DOWN_POS_Y = 570;
+
+
 const int NUM_OF_ITEMS = 5;
 const int NUM_OF_VERTICAL_BLOCKS = 6;
 const int NUM_OF_HORIZENTAL_BLOCKS = 10;
 const int PLAY_GROUND_LENGTH = 980;
 const int PLAY_GROUND_WIDTH = 570;
+const int NUM_OF_ROWS = 5;
 const string PATH_GAME_SETTING = "./GameSetting.csv";
 const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
@@ -58,6 +68,8 @@ const string REGULAR_ZOMBIE_PNG = "regular_zombie";
 const string NORMAL_ZOMBIE_PNG = "normal_zombie.png";
 const string FRONTYARD_PNG = "Frontyard.png";
 const string ITEM_BAR_PNG = "Item_Bar.png";
+const string WIN_SCREEN_PNG = "Winning_Pic.png";
+const string GAMEOVER_SCREEN_PNG = "Losing_Message.png";
 
 
 

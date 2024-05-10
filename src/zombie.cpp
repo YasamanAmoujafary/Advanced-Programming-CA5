@@ -4,9 +4,10 @@ void Zombie::render()
     window_ptr->draw(zombie_sprite);
 }
 
-NormalZombie::NormalZombie(RenderWindow *_window_ptr, Vector2i _pos)
+NormalZombie::NormalZombie(RenderWindow *_window_ptr, Vector2i _pos,int _row)
     : Zombie(_window_ptr)
 {
+    row = _row;
     zombie_pos.x = _pos.x;
     zombie_pos.y = _pos.y;
     zombie_sprite.setPosition(_pos.x, _pos.y);
