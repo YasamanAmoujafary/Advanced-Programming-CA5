@@ -11,7 +11,9 @@ System::System(State _state)
     current_phase = 0;
     set_background();
     for (int i = 0; i < NUM_OF_ROWS; i++)
+    {
         num_zombies_in_row.push_back(0);
+    }
 }
 
 void System::handle_cooldown()
@@ -54,16 +56,24 @@ void System::handle_attack_wave()
     {
         if (zombie_arrival_time[i] <= systemClock.getElapsedTime().asSeconds() && zombie_arrival_time[i] != -1)
         {
+            int which_random_zombie = get_random_number_between_a_limit(3);
             zombie_arrival_time[i] = -1;
-            int block_row[5] = {30, 130, 230, 330, 430};
+            int block_row[5] = {20, 120, 220, 320, 420};
             int which_random_row_zombie = get_random_number_between_a_limit(6);
             Vector2i zombie_pos;
             zombie_pos.y = block_row[which_random_row_zombie - 1];
             num_zombies_in_row[which_random_row_zombie - 1]++;
             zombie_pos.x = 1000;
-            NormalZombie *normalzombie = new NormalZombie(&window, zombie_pos, which_random_row_zombie);
-            zombies.push_back(normalzombie);
-            cout << "in phase: " << current_phase << "zombie added in time " << systemClock.getElapsedTime().asSeconds() << endl;
+            if (which_random_zombie == 1)
+                {
+                    NormalZombie *normalzombie = new NormalZombie(&window,zombie_pos,which_random_row_zombie);
+                    zombies.push_back(normalzombie);
+                }
+                else
+                {
+                    GiantZombie *giantzombie = new GiantZombie(&window,zombie_pos,which_random_row_zombie);
+                    zombies.push_back(giantzombie);
+                }
         }
     }
 }
@@ -245,8 +255,8 @@ void System::render()
         {
             zombie->render();
         }
-        phase_text = "PHASE: " + to_string(current_phase + 1);
-
+        phase_text = "PHASE: " + to_string(current_phase);
+        write_phase_text(phase_text);
         // graphically show phase_text;
 
         // for (auto plant : plants)
@@ -280,6 +290,23 @@ void System::render()
         break;
     }
     window.display();
+}
+
+void System::write_phase_text(string phase_text)
+{
+    Font font;
+    if(!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
+    {
+        cerr<<"cannot open the file"<<endl;
+    }
+    Text text;
+    text.setFont(font);
+    text.setString(phase_text);
+    text.setCharacterSize(30);
+    text.setFillColor(Color::Black);
+    text.setPosition(0,0);
+    window.draw(text);
+
 }
 
 void System::make_map()

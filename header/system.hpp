@@ -54,4 +54,5 @@ private:
     void adding_item_bar_objects();
     pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
     void handle_attack_wave();
+    void write_phase_text(string phase_text);
 };

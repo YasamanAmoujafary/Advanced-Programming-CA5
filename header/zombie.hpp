@@ -38,7 +38,11 @@ private:
 class GiantZombie : public Zombie
 {
 public:
+    GiantZombie(RenderWindow *_window_ptr, Vector2i _pos, int _row);
     // void render();
-    // void update();
+    void update();
 private:
+    int walking_zombie_animation_poses[33];
+    int current_animation_rect_number =0;
+    Clock animation_clock;
 };
