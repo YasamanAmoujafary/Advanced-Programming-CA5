@@ -10,7 +10,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
-
+#include<unistd.h>
+#include<chrono>
+#include<random>
 using namespace std;
 using namespace sf;
 
@@ -53,7 +55,9 @@ const string SNOW_PROJECTILE_PNG= "snow_projectile.png";
 const string REGULAR_PROJECTILE_NAME = "regular_projectile";
 const string SNOW_PROJECTILE_NAME = "snow_projectile";
 const string REGULAR_ZOMBIE_PNG = "regular_zombie";
-
+const string NORMAL_ZOMBIE_PNG = "normal_zombie.png";
+const string FRONTYARD_PNG = "Frontyard.png";
+const string ITEM_BAR_PNG = "Item_Bar.png";
 
 
 

@@ -1,9 +1,14 @@
 #include "system.hpp"
-
 System::System(State _state)
 {
     dragged_object = NULL;
     state = _state;
+    attack_data = read_from_file(3, 1);
+    for (int i = 0; i < attack_data[0] / attack_data[1]; i++)
+        time_interval.push_back(i * attack_data[1]);
+    for (int i = 0; i < attack_data[0] / attack_data[1]; i++)
+        num_zombies_per_phase.push_back(attack_data[2] + attack_data[3] * i);
+    current_phase = 0;
     set_background();
 }
 void System::run()
@@ -37,6 +42,45 @@ void System::handle_cooldown()
     }
 }
 
+void System::handle_attack_phases()
+{
+    systemElapsed = systemClock.getElapsedTime();
+    if (systemElapsed.asSeconds() >= attack_data[1])
+    {
+        vector<int> zombie_arrival_time(num_zombies_per_phase[current_phase]);
+        for (int i = 0; i < zombie_arrival_time.size(); i++)
+            zombie_arrival_time[i] = (get_random_number_between_a_limit(attack_data[1]));
+        sort(zombie_arrival_time.begin(), zombie_arrival_time.end());
+        for (int i = 0; i < zombie_arrival_time.size(); i++)
+        {
+            cout << zombie_arrival_time[i] << endl;
+            if (zombie_arrival_time[i] <= systemElapsed.asSeconds() && zombie_arrival_time[i] != -1)
+            {
+                zombie_arrival_time[i] = -1;
+
+                int which_random_zombie = get_random_number_between_a_limit(3);
+                int block_row[5] = {130, 230, 330, 430, 30};
+                int which_random_row_zombie = get_random_number_between_a_limit(6);
+                Vector2i zombie_pos;
+                zombie_pos.y = block_row[which_random_row_zombie - 1];
+                zombie_pos.x = 1000;
+                if (which_random_zombie == 1)
+                {
+                    NormalZombie *normalzombie = new NormalZombie(&window,zombie_pos);
+                    zombies.push_back(normalzombie);
+                }
+                // else
+                // {
+                //     GiantZombie *giantzombie = new GiantZombie();
+                // }
+            }
+        }
+
+        current_phase++;
+        systemClock.restart();
+    }
+}
+
 void System::update()
 {
     handle_cooldown();
@@ -48,6 +92,11 @@ void System::update()
     {
         projectile->update();
     }
+    for (auto zombie : zombies)
+    {
+        zombie->update();
+    }
+    handle_attack_phases();
 }
 void System::handle_events()
 {
@@ -125,12 +174,12 @@ void System::handle_events()
 void System ::set_background()
 {
     window.create(VideoMode(WINDOW_LENGTH, WINDOW_WIDTH), "PVZ");
-    if (!background_texture.loadFromFile(PICS_PATH + "Frontyard.png"))
+    if (!background_texture.loadFromFile(PICS_PATH + FRONTYARD_PNG))
     {
         cerr << "cant upload image!";
     }
     background_sprite.setTexture(background_texture);
-    if (!item_bar_texture.loadFromFile(PICS_PATH + "Item_Bar.png"))
+    if (!item_bar_texture.loadFromFile(PICS_PATH + ITEM_BAR_PNG))
     {
         cerr << "cant upload image!";
     }
@@ -161,6 +210,7 @@ void System::adding_item_bar_objects()
 void System::render()
 {
     window.clear();
+    string phase_text;
     switch (state)
     {
     case (IN_GAME):
@@ -178,6 +228,13 @@ void System::render()
         {
             projectile->render();
         }
+        for (auto zombie : zombies)
+        {
+            zombie->render();
+        }
+        phase_text = "PHASE: " + to_string(current_phase + 1);
+
+        // graphically show phase_text;
 
         // for (auto plant : plants)
         // {

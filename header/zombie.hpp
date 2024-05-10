@@ -4,26 +4,17 @@
 class Zombie
 {
 public:
-    Zombie(RenderWindow *_window_ptr, string zombie_type_png) : window_ptr(_window_ptr)
-    {
-        if(!zombie_texture.loadFromFile(PICS_PATH + zombie_type_png))
-        {
-           cerr << "cant upload image!";
-        }
-        zombie_sprite.setTexture(zombie_texture);
-        zombie_sprite.setScale(1,1);
-        IntRect rect;
-        rect.width = 34;
-        rect.height = 62;
-        zombie_sprite.setTextureRect(rect);
+    Zombie(RenderWindow *_window_ptr) : window_ptr(_window_ptr){
+
     }
-    // virtual void render();
-    // virtual void update();
+    void render();
+    virtual void update() = 0;
 
 protected:
     Texture zombie_texture;
     Sprite zombie_sprite;
     RenderWindow *window_ptr;
+    Vector2i zombie_pos;
     int health;
     int damage;
     int speed;
@@ -33,9 +24,13 @@ protected:
 class NormalZombie : public Zombie
 {
 public:
+    NormalZombie(RenderWindow *_window_ptr, Vector2i _pos);
     // void render();
-    // void update();
+    void update();
 private:
+    int walking_zombie_animation_poses[46];
+    int current_animation_rect_number =0;
+    Clock animation_clock;
 };
 
 class GiantZombie : public Zombie
