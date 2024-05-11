@@ -18,6 +18,8 @@ public:
     virtual void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row) = 0;
     Vector2i get_pos() { return pos; }
     Sprite get_plant_sprite() { return plant_sprite; }
+    FloatRect get_rect() { return plant_sprite.getGlobalBounds(); }
+    void update_health(int damaged){health-=damaged;}
     void change_pos(int x, int y)
     {
         pos.x = x;
@@ -50,7 +52,7 @@ public:
     }
     bool get_is_in_cooldown() { return is_in_cooldown; }
     void change_is_in_cooldown() { is_in_cooldown = true; }
-
+    int get_health(){return health;}
 protected:
     Texture plant_texture;
     Sprite plant_sprite;

@@ -44,6 +44,7 @@ const int NUM_OF_HORIZENTAL_BLOCKS = 10;
 const int PLAY_GROUND_LENGTH = 980;
 const int PLAY_GROUND_WIDTH = 570;
 const int NUM_OF_ROWS = 5;
+const int ZOMBIE_IN_SNOW_TIME = 5;
 const string PATH_GAME_SETTING = "./GameSetting.csv";
 const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
@@ -73,7 +74,7 @@ const string ITEM_BAR_PNG = "Item_Bar.png";
 const string PHASE_FONT_TTF = "Jersey25Charted-Regular.ttf";
 const string WIN_SCREEN_PNG = "Winning_Pic.png";
 const string GAMEOVER_SCREEN_PNG = "Losing_Message.png";
-
+const string ERROR_MESSAGE = "Can't open the file"; 
 
 
 

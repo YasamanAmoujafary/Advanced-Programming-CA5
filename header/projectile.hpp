@@ -1,6 +1,6 @@
 #pragma once
 // #include "plant.hpp"
-//#include "utilities.hpp"
+// #include "utilities.hpp"
 #include "zombie.hpp"
 
 class Projectile
@@ -13,12 +13,16 @@ public:
             cerr << "cant upload image!";
         }
         projectile_sprite.setTexture(projectile_texture);
-        projectile_sprite.setScale(0.018, 0.018);
+        projectile_sprite.setScale(0.013, 0.013);
     }
-    Vector2i get_pos(){return pos;}
+    Vector2i get_pos() { return pos; }
     void render();
     void update();
-    string get_name() {return projectile_name;}
+    string get_name() { return projectile_name; }
+    FloatRect get_rect() { return projectile_sprite.getGlobalBounds(); }
+    int get_damage() { return damage; }
+    string get_projectile_name() { return projectile_name; }
+    vector<int> file_data;
 
 protected:
     int damage;
@@ -42,7 +46,7 @@ private:
 class Snow_projectile : public Projectile
 {
 public:
-    Snow_projectile(RenderWindow *_window_ptr,Vector2i _pos, string projectile_type_png);
+    Snow_projectile(RenderWindow *_window_ptr, Vector2i _pos, string projectile_type_png);
 
 private:
 };

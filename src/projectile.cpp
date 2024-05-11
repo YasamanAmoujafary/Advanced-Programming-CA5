@@ -21,7 +21,6 @@ Regular_projectile::Regular_projectile(RenderWindow *_window_ptr, Vector2i _pos,
     projectile_name = REGULAR_PROJECTILE_NAME;
     pos = _pos;
     projectile_sprite.setPosition(_pos.x, _pos.y);
-    vector<int> file_data;
     file_data = read_from_file(2, 1);
     damage = file_data[0];
     speed = file_data[4];
@@ -32,7 +31,6 @@ Snow_projectile::Snow_projectile(RenderWindow *_window_ptr, Vector2i _pos, strin
     projectile_name = SNOW_PROJECTILE_NAME;
     pos = _pos;
     projectile_sprite.setPosition(_pos.x, _pos.y);
-    vector<int> file_data;
     file_data = read_from_file(2, 2);
     damage = file_data[0];
     speed = file_data[4];

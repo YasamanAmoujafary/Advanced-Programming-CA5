@@ -40,7 +40,6 @@ void System::handle_attack_wave()
 {
     if (systemClock.getElapsedTime().asSeconds() >= attack_data[1])
     {
-        //  systemElapsed = systemClock.getElapsedTime();
         systemClock.restart();
         current_phase++;
         zombie_arrival_time.clear();
@@ -63,19 +62,111 @@ void System::handle_attack_wave()
             Vector2i zombie_pos;
             zombie_pos.y = block_row[which_random_row_zombie - 1];
             num_zombies_in_row[which_random_row_zombie - 1]++;
-            zombie_pos.x = 1000;
+            zombie_pos.x = PLAY_GROUND_LENGTH;
             if (which_random_zombie == 1)
-                {
-                    NormalZombie *normalzombie = new NormalZombie(&window,zombie_pos,which_random_row_zombie);
-                    zombies.push_back(normalzombie);
-                }
-                else
-                {
-                    GiantZombie *giantzombie = new GiantZombie(&window,zombie_pos,which_random_row_zombie);
-                    zombies.push_back(giantzombie);
-                }
+            {
+                NormalZombie *normalzombie = new NormalZombie(&window, zombie_pos, which_random_row_zombie);
+                zombies.push_back(normalzombie);
+            }
+            else
+            {
+                GiantZombie *giantzombie = new GiantZombie(&window, zombie_pos, which_random_row_zombie);
+                zombies.push_back(giantzombie);
+            }
         }
     }
+}
+
+void System::handle_zombie_projectile_collision()
+{
+    if (zombies.empty() || projectiles.empty())
+        return;
+    for (int i = 0; i < zombies.size(); i++)
+    {
+        for (int j = 0; j < projectiles.size(); j++)
+        {
+            FloatRect p_rect = projectiles[j]->get_rect();
+            FloatRect z_rect = zombies[i]->get_rect();
+            if (z_rect.intersects(p_rect))
+            {
+                if (projectiles[j]->get_name() == SNOW_PROJECTILE_NAME && !zombies[i]->get_in_snow_mode())
+                {
+                    zombies[i]->change_is_in_snow_mode();
+                }
+                zombies[i]->update_health(projectiles[j]->get_damage());
+                auto save_p = projectiles[j];
+                projectiles.erase(projectiles.begin() + j);
+                delete save_p;
+                j--;
+                if (zombies[i]->get_health() <= 0)
+                {
+                    num_zombies_in_row[zombies[i]->get_row() - 1]--;
+                    auto save_z = zombies[i];
+                    zombies.erase(zombies.begin() + i);
+                    delete save_z;
+                    i--;
+                }
+                break;
+            }
+        }
+    }
+}
+
+void System::delete_projectile_out_of_bounds()
+{
+    for (int i = 0; i < projectiles.size(); i++)
+    {
+        if (projectiles[i]->get_pos().x > PLAY_GROUND_LENGTH)
+        {
+            auto save_p = projectiles[i];
+            projectiles.erase(projectiles.begin() + i);
+            delete save_p;
+            i--;
+        }
+    }
+}
+
+void System::handle_zombie_plant_collision()
+
+{
+    if (zombies.empty() || plants.empty())
+        return;
+    for (int j = 0; j < plants.size(); j++)
+    {
+        FloatRect p_rect = plants[j]->get_rect();
+        for (int i = 0; i < zombies.size(); i++)
+        {
+            FloatRect z_rect = zombies[i]->get_rect();
+            if (z_rect.intersects(p_rect) && zombies[i]->get_row() == plants[j]->get_row())
+            {
+                zombies[i]->make_stable();
+                if (zombies[i]->is_in_hit_moment())
+                {
+                    plants[j]->update_health(zombies[i]->get_damage());
+                }
+            }
+        }
+        if (plants[j]->get_health() <= 0)
+        {
+            for (auto zombie : zombies)
+            {
+                if (zombie->get_row() == plants[j]->get_row())
+                {
+                    zombie->set_in_motion();
+                }
+            }
+            auto save_p = plants[j];
+            plants.erase(plants.begin() + j);
+            delete save_p;
+            j--;
+        }
+    }
+}
+
+void System::handle_collision()
+{
+    handle_zombie_projectile_collision();
+    handle_zombie_plant_collision();
 }
 
 void System::run()
@@ -93,6 +184,7 @@ void System::run()
 void System::update()
 {
     handle_cooldown();
+    handle_collision();
     for (auto plant : plants)
     {
         plant->update(projectiles, num_zombies_in_row);
@@ -194,23 +286,19 @@ void System ::set_background()
     window.create(VideoMode(WINDOW_LENGTH, WINDOW_WIDTH), "PVZ");
     if (!background_texture.loadFromFile(PICS_PATH + FRONTYARD_PNG))
     {
-        cerr << "cant upload image!";
+        cerr << ERROR_MESSAGE << endl;
     }
     background_sprite.setTexture(background_texture);
     if (!item_bar_texture.loadFromFile(PICS_PATH + ITEM_BAR_PNG))
     {
-        cerr << "cant upload image!";
+        cerr << ERROR_MESSAGE << endl;
     }
     item_bar_sprite.setTexture(item_bar_texture);
     float scaleX = static_cast<float>(ITEM_BAR_LENGTH) / (item_bar_texture.getSize().x);
     float scaleY = static_cast<float>(ITEM_BAR_WEIDTH) / (item_bar_texture.getSize().y);
     item_bar_sprite.setScale(scaleX, scaleY);
     item_bar_sprite.setPosition(0, 50);
-
     adding_item_bar_objects();
-    // float scalex = static_cast<float>(window.getSize().x) / background_texture.getSize().x;
-    // float scaley = static_cast<float>(window.getSize().y) / background_texture.getSize().y;
-    // background_sprite.setScale(scalex, scaley);
 }
 
 void System::adding_item_bar_objects()
@@ -248,41 +336,27 @@ void System::render()
         {
             projectile->render();
         }
-        // cout << "current phase is : " << current_phase << endl;
-        // cout << "total num of zombies" << zombies.size() << endl;
-
         for (auto zombie : zombies)
         {
             zombie->render();
         }
         phase_text = "PHASE: " + to_string(current_phase);
         write_phase_text(phase_text);
-        // graphically show phase_text;
-
-        // for (auto plant : plants)
-        // {
-        //     Sprite p;
-        //     p = plant->get_plant_sprite();
-        //     p.setPosition(plant->get_pos().x, plant->get_pos().y);
-        //     window.draw(p);
-        //     p.move(100, 0);
-        //     window.draw(p);
-        // }
         break;
     case (WON):
-       
+
         if (!win_texture.loadFromFile(PICS_PATH + WIN_SCREEN_PNG))
-            cerr << "Can't open the file" << endl;
+            cerr << ERROR_MESSAGE << endl;
         win_sprite.setTexture(win_texture);
-        win_sprite.setScale(0.3,0.3);
+        win_sprite.setScale(0.3, 0.3);
         window.draw(win_sprite);
         break;
     case (GAMEOVER):
 
         if (!lost_texture.loadFromFile(PICS_PATH + GAMEOVER_SCREEN_PNG))
-            cerr << "Can't open the file" << endl;
+            cerr << ERROR_MESSAGE << endl;
         lost_sprite.setTexture(lost_texture);
-        lost_sprite.setScale(3,1.9);
+        lost_sprite.setScale(3, 1.9);
         window.draw(lost_sprite);
         break;
     case (EXIT):
@@ -296,18 +370,17 @@ void System::render()
 void System::write_phase_text(string phase_text)
 {
     Font font;
-    if(!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
+    if (!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
     {
-        cerr<<"cannot open the file"<<endl;
+        cerr << "cannot open the file" << endl;
     }
     Text text;
     text.setFont(font);
     text.setString(phase_text);
     text.setCharacterSize(30);
     text.setFillColor(Color::Black);
-    text.setPosition(0,0);
+    text.setPosition(0, 0);
     window.draw(text);
-
 }
 
 void System::make_map()
@@ -325,13 +398,6 @@ void System::make_map()
         tempMap[i] = temp_horizental;
     }
     Map = new vector<vector<pair<Vector2i, bool>>>(tempMap);
-    //    for(int i = 0; i < Map->size(); i++)
-    // {
-    //     for(int j = 0; j <(*Map)[i].size(); j++)
-    //     {
-    //         cout<<(*Map)[i][j].first.x<<","<<(*Map)[i][j].first.y<<"and is: "<<(*Map)[i][j].second<<endl;
-    //     }
-    // }
 }
 
 pair<Vector2i, bool> System::get_center_block_position(Vector2i mouse_pos)

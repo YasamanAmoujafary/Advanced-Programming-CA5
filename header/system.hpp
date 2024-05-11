@@ -49,10 +49,14 @@ private:
     void render();
     void handle_events();
     void handle_cooldown();
-    // void handle_plant_updates();
+    void handle_zombie_projectile_collision();
+    void handle_zombie_plant_collision();
+    void handle_collision();
     void set_background();
     void adding_item_bar_objects();
     pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
     void handle_attack_wave();
     void write_phase_text(string phase_text);
+    void delete_projectile_out_of_bounds();
+
 };
