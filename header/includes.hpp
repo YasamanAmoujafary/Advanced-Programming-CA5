@@ -10,7 +10,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
-
+#include<unistd.h>
+#include<chrono>
+#include<random>
 using namespace std;
 using namespace sf;
 
@@ -27,14 +29,25 @@ const int SECOND_ITEM_BAR_POS_Y = 150;
 const int THIRD_ITEM_BAR_POS_Y = 250;
 const int FORTH_ITEM_BAR_POS_Y = 350;
 const int FIFTH_ITEM_BAR_POS_Y = 450;
+
+const int FIRST_BLOCK_TOP_POS_Y = 70;
+const int SECOND_BLOCK_TOP_POS_Y = 170;
+const int THIRD_BLOCK_TOP_POS_Y = 270;
+const int FORTH_BLOCK_TOP_POS_Y = 370;
+const int FIFTH_BLOCK_TOP_POS_Y = 470;
+const int FIFTH_BLOCK_DOWN_POS_Y = 570;
+
+
 const int NUM_OF_ITEMS = 5;
 const int NUM_OF_VERTICAL_BLOCKS = 6;
 const int NUM_OF_HORIZENTAL_BLOCKS = 10;
 const int PLAY_GROUND_LENGTH = 980;
 const int PLAY_GROUND_WIDTH = 570;
+const int NUM_OF_ROWS = 5;
 const string PATH_GAME_SETTING = "./GameSetting.csv";
 const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
+const string FONTS_PATH = "./fonts/";
 const char TYPE_DELIMETER = ',';
 const char INTRO_DELIMETER = ':';
 const char DATA_DELIMETER = '-';
@@ -52,7 +65,14 @@ const string REGULAR_PROJECTILE_PNG = "regular_projectile.png";
 const string SNOW_PROJECTILE_PNG= "snow_projectile.png";
 const string REGULAR_PROJECTILE_NAME = "regular_projectile";
 const string SNOW_PROJECTILE_NAME = "snow_projectile";
-
+const string REGULAR_ZOMBIE_PNG = "regular_zombie";
+const string NORMAL_ZOMBIE_PNG = "normal_zombie.png";
+const string GIANT_ZOMBIE_PNG = "giant_zombie.png";
+const string FRONTYARD_PNG = "Frontyard.png";
+const string ITEM_BAR_PNG = "Item_Bar.png";
+const string PHASE_FONT_TTF = "Jersey25Charted-Regular.ttf";
+const string WIN_SCREEN_PNG = "Winning_Pic.png";
+const string GAMEOVER_SCREEN_PNG = "Losing_Message.png";
 
 
 

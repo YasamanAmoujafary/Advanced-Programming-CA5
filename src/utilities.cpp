@@ -49,3 +49,12 @@ vector<int> read_from_file(int row, int col)
     game_setting_file.close();
     return storing_data;
 }
+int get_random_number_between_a_limit(int limit)
+{
+    int random_num = 0;
+    unsigned seed = static_cast<unsigned>(chrono::system_clock::now().time_since_epoch().count());
+    mt19937 generator(seed);
+    uniform_int_distribution<int> distribution(1,limit-1);
+    random_num = distribution(generator);
+    return random_num;
+}
