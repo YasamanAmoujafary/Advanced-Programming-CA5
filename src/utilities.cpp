@@ -43,12 +43,13 @@ vector<int> read_from_file(int row, int col)
     }
     else
     {
-        cerr << "file couldn't be opened" << endl;
+        cerr << ERROR_MESSAGE << endl;
         exit(1);
     }
     game_setting_file.close();
     return storing_data;
 }
+
 int get_random_number_between_a_limit(int limit)
 {
     int random_num = 0;

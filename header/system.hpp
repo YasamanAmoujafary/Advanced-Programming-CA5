@@ -14,7 +14,7 @@ class System
 public:
     System(State _state);
     void run();
-    //~System();
+    ~System();
     void make_map();
 
 private:
@@ -54,9 +54,8 @@ private:
     void handle_collision();
     void set_background();
     void adding_item_bar_objects();
-    pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
     void handle_attack_wave();
     void write_phase_text(string phase_text);
     void delete_projectile_out_of_bounds();
-
+    pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
 };

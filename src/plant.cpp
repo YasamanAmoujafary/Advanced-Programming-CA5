@@ -1,9 +1,16 @@
 #include "plant.hpp"
+Plant::Plant(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos) : window_ptr(_window_ptr)
+{
+    pos = _pos;
+
+    plant_png_path = _plant_png_path;
+    is_in_cooldown = false;
+}
 
 Walnut::Walnut(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
     : Plant(_window_ptr, _plant_png_path, _pos)
 {
-    plant_name = "walnut";
+    plant_name = WALNUT_NAME;
     vector<int> file_data;
     file_data = read_from_file(2, 5);
     health = file_data[1];
@@ -11,26 +18,49 @@ Walnut::Walnut(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
     hit_rate = file_data[3];
     price = file_data[5];
 }
-void Walnut::render(int bg_pos_x, int bg_pos_y)
-{
-    if (!plant_texture.loadFromFile(PICS_PATH + plant_png_path))
-    {
-        cerr << "cant upload image!";
-    }
-    plant_sprite.setTexture(plant_texture);
-    float scaleX = static_cast<float>(bg_pos_x) / (plant_texture.getSize().x);
-    float scaleY = static_cast<float>(bg_pos_y) / (plant_texture.getSize().y);
-    plant_sprite.setScale(scaleX, scaleY);
-    plant_sprite.setPosition(pos.x, pos.y);
-    window_ptr->draw(plant_sprite);
-}
 
 Sunflower::Sunflower(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
     : Plant(_window_ptr, _plant_png_path, _pos)
 {
-    plant_name = "sunflower";
+    plant_name = SUNFLOWER_NAME;
     vector<int> file_data;
     file_data = read_from_file(2, 4);
+    health = file_data[1];
+    cooldown = file_data[2];
+    hit_rate = file_data[3];
+    price = file_data[5];
+}
+
+PeaShooter::PeaShooter(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
+    : Plant(_window_ptr, _plant_png_path, _pos)
+{
+    plant_name = PEASHOOTER_NAME;
+    vector<int> file_data;
+    file_data = read_from_file(2, 1);
+    health = file_data[1];
+    cooldown = file_data[2];
+    hit_rate = file_data[3];
+    price = file_data[5];
+}
+
+SnowPeaShooter::SnowPeaShooter(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
+    : Plant(_window_ptr, _plant_png_path, _pos)
+{
+    plant_name = SNOWPEASHOOTER_NAME;
+    vector<int> file_data;
+    file_data = read_from_file(2, 2);
+    health = file_data[1];
+    cooldown = file_data[2];
+    hit_rate = file_data[3];
+    price = file_data[5];
+}
+
+Watermelon::Watermelon(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
+    : Plant(_window_ptr, _plant_png_path, _pos)
+{
+    plant_name = WATERMELON_NAME;
+    vector<int> file_data;
+    file_data = read_from_file(2, 3);
     health = file_data[1];
     cooldown = file_data[2];
     hit_rate = file_data[3];
@@ -41,7 +71,7 @@ void Sunflower::render(int bg_pos_x, int bg_pos_y)
 {
     if (!plant_texture.loadFromFile(PICS_PATH + plant_png_path))
     {
-        cerr << "cant upload image!";
+        cerr << ERROR_MESSAGE << endl;
     }
     plant_sprite.setTexture(plant_texture);
     float scaleX = static_cast<float>(bg_pos_x) / (plant_texture.getSize().x);
@@ -49,25 +79,13 @@ void Sunflower::render(int bg_pos_x, int bg_pos_y)
     plant_sprite.setScale(scaleX, scaleY);
     plant_sprite.setPosition(pos.x, pos.y);
     window_ptr->draw(plant_sprite);
-}
-
-PeaShooter::PeaShooter(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
-    : Plant(_window_ptr, _plant_png_path, _pos)
-{
-    plant_name = "peashooter";
-    vector<int> file_data;
-    file_data = read_from_file(2, 1);
-    health = file_data[1];
-    cooldown = file_data[2];
-    hit_rate = file_data[3];
-    price = file_data[5];
 }
 
 void PeaShooter::render(int bg_pos_x, int bg_pos_y)
 {
     if (!plant_texture.loadFromFile(PICS_PATH + plant_png_path))
     {
-        cerr << "cant upload image!";
+        cerr << ERROR_MESSAGE << endl;
     }
     plant_sprite.setTexture(plant_texture);
     float scaleX = static_cast<float>(bg_pos_x) / (plant_texture.getSize().x);
@@ -77,23 +95,25 @@ void PeaShooter::render(int bg_pos_x, int bg_pos_y)
     window_ptr->draw(plant_sprite);
 }
 
-SnowPeaShooter::SnowPeaShooter(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
-    : Plant(_window_ptr, _plant_png_path, _pos)
+void Walnut::render(int bg_pos_x, int bg_pos_y)
 {
-    plant_name = "snowpeashooter";
-    vector<int> file_data;
-    file_data = read_from_file(2, 2);
-    health = file_data[1];
-    cooldown = file_data[2];
-    hit_rate = file_data[3];
-    price = file_data[5];
+    if (!plant_texture.loadFromFile(PICS_PATH + plant_png_path))
+    {
+        cerr << ERROR_MESSAGE << endl;
+    }
+    plant_sprite.setTexture(plant_texture);
+    float scaleX = static_cast<float>(bg_pos_x) / (plant_texture.getSize().x);
+    float scaleY = static_cast<float>(bg_pos_y) / (plant_texture.getSize().y);
+    plant_sprite.setScale(scaleX, scaleY);
+    plant_sprite.setPosition(pos.x, pos.y);
+    window_ptr->draw(plant_sprite);
 }
 
 void SnowPeaShooter::render(int bg_pos_x, int bg_pos_y)
 {
     if (!plant_texture.loadFromFile(PICS_PATH + plant_png_path))
     {
-        cerr << "cant upload image!";
+        cerr << ERROR_MESSAGE << endl;
     }
     plant_sprite.setTexture(plant_texture);
     float scaleX = static_cast<float>(bg_pos_x) / (plant_texture.getSize().x);
@@ -101,18 +121,6 @@ void SnowPeaShooter::render(int bg_pos_x, int bg_pos_y)
     plant_sprite.setScale(scaleX, scaleY);
     plant_sprite.setPosition(pos.x, pos.y);
     window_ptr->draw(plant_sprite);
-}
-
-Watermelon::Watermelon(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos)
-    : Plant(_window_ptr, _plant_png_path, _pos)
-{
-    plant_name = "watermelon";
-    vector<int> file_data;
-    file_data = read_from_file(2, 3);
-    health = file_data[1];
-    cooldown = file_data[2];
-    hit_rate = file_data[3];
-    price = file_data[5];
 }
 
 void Watermelon::render(int bg_pos_x, int bg_pos_y)
@@ -163,12 +171,41 @@ void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_z
         }
     }
 }
+
 void Walnut::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
 {
 }
+
 void Sunflower::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
 {
 }
+
 void Watermelon::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
 {
+}
+
+void Plant::change_pos(int x, int y)
+{
+    pos.x = x;
+    pos.y = y;
+    row = 0;
+    if (FIRST_BLOCK_TOP_POS_Y <= pos.y && pos.y < SECOND_BLOCK_TOP_POS_Y)
+        row = 1;
+    if (SECOND_BLOCK_TOP_POS_Y <= pos.y && pos.y < THIRD_BLOCK_TOP_POS_Y)
+        row = 2;
+    if (THIRD_BLOCK_TOP_POS_Y <= pos.y && pos.y < FORTH_BLOCK_TOP_POS_Y)
+        row = 3;
+    if (FORTH_BLOCK_TOP_POS_Y <= pos.y && pos.y < FIFTH_BLOCK_TOP_POS_Y)
+        row = 4;
+    if (FIFTH_BLOCK_TOP_POS_Y <= pos.y && pos.y < FIFTH_BLOCK_DOWN_POS_Y)
+        row = 5;
+}
+
+void Plant::update_cooldown()
+{
+    plantElapsed = plantClock.getElapsedTime();
+    if (cooldown <= plantElapsed.asSeconds())
+    {
+        is_in_cooldown = false;
+    }
 }

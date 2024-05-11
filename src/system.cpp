@@ -16,6 +16,20 @@ System::System(State _state)
     }
 }
 
+System::~System()
+{
+    for (auto plant : plants)
+        delete plant;
+    for (auto item_bar_object : item_bar_objects)
+        delete item_bar_object;
+    for (auto cool_downed_object : cool_downed_objects)
+        delete cool_downed_object;
+    for (auto projectile : projectiles)
+        delete projectile;
+    for (auto zombie : zombies)
+        delete zombie;
+}
+
 void System::handle_cooldown()
 {
     for (auto item_bar_object : item_bar_objects)
@@ -185,6 +199,7 @@ void System::update()
 {
     handle_cooldown();
     handle_collision();
+    delete_projectile_out_of_bounds();
     for (auto plant : plants)
     {
         plant->update(projectiles, num_zombies_in_row);
@@ -423,13 +438,5 @@ pair<Vector2i, bool> System::get_center_block_position(Vector2i mouse_pos)
     }
     center_pos_and_if_in_board.first = center_pos;
     center_pos_and_if_in_board.second = can_plant_object;
-    // for (int i = 0; i < Map->size(); i++)
-    // {
-    //     for (int j = 0; j < (*Map)[i].size(); j++)
-    //     {
-    //         cout << (*Map)[i][j].first.x << "," << (*Map)[i][j].first.y << endl;
-    //     }
-    // }
-
     return center_pos_and_if_in_board;
 }

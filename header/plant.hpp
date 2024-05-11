@@ -1,55 +1,23 @@
 #pragma once
-// #include "utilities.hpp"
 #include "projectile.hpp"
 
 class Plant
 {
 public:
-    Plant(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos) : window_ptr(_window_ptr)
-    {
-        pos = _pos;
-
-        plant_png_path = _plant_png_path;
-        is_in_cooldown = false;
-    }
+    Plant(RenderWindow *_window_ptr, string _plant_png_path, Vector2i _pos);
     virtual void render(int bg_pos_x, int bg_pos_y) = 0;
     virtual void set_normal_plant_png() = 0;
     virtual void set_cool_downed_plant_png() = 0;
     virtual void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row) = 0;
+    void change_pos(int x, int y);
+    void update_cooldown();
     Vector2i get_pos() { return pos; }
     Sprite get_plant_sprite() { return plant_sprite; }
     FloatRect get_rect() { return plant_sprite.getGlobalBounds(); }
     void update_health(int damaged){health-=damaged;}
-    void change_pos(int x, int y)
-    {
-        pos.x = x;
-        pos.y = y;
-        row = 0;
-        if (FIRST_BLOCK_TOP_POS_Y <= pos.y && pos.y < SECOND_BLOCK_TOP_POS_Y)
-            row = 1;
-        if (SECOND_BLOCK_TOP_POS_Y <= pos.y && pos.y < THIRD_BLOCK_TOP_POS_Y)
-            row = 2;
-        if (THIRD_BLOCK_TOP_POS_Y <= pos.y && pos.y < FORTH_BLOCK_TOP_POS_Y)
-            row = 3;
-        if (FORTH_BLOCK_TOP_POS_Y <= pos.y && pos.y < FIFTH_BLOCK_TOP_POS_Y)
-            row = 4;
-        if (FIFTH_BLOCK_TOP_POS_Y <= pos.y && pos.y < FIFTH_BLOCK_DOWN_POS_Y)
-            row = 5;
-    }
     string get_plant_name() { return plant_name; }
     int get_row() { return row; }
-    void start_timer()
-    {
-        plantClock.restart();
-    }
-    void update_cooldown()
-    {
-        plantElapsed = plantClock.getElapsedTime();
-        if (cooldown <= plantElapsed.asSeconds())
-        {
-            is_in_cooldown = false;
-        }
-    }
+    void start_timer(){plantClock.restart();}
     bool get_is_in_cooldown() { return is_in_cooldown; }
     void change_is_in_cooldown() { is_in_cooldown = true; }
     int get_health(){return health;}

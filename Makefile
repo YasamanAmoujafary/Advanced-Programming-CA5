@@ -9,8 +9,9 @@ MEDIA_PATH = ./images/
 SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
  
-clean:  all
+clean:
 	rm -rf $(OBJ_DIR)/*.o
+	rm -rf $(EXES)
 
 all : $(EXES)
 

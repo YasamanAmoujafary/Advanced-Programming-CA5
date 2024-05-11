@@ -75,6 +75,11 @@ const string PHASE_FONT_TTF = "Jersey25Charted-Regular.ttf";
 const string WIN_SCREEN_PNG = "Winning_Pic.png";
 const string GAMEOVER_SCREEN_PNG = "Losing_Message.png";
 const string ERROR_MESSAGE = "Can't open the file"; 
+const string SUNFLOWER_NAME = "sunflower";
+const string PEASHOOTER_NAME = "peashooter";
+const string SNOWPEASHOOTER_NAME = "snowpeashooter";
+const string WALNUT_NAME = "walnut";
+const string WATERMELON_NAME = "watermelon";
 
 
 
