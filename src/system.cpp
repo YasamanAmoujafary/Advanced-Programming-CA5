@@ -1,6 +1,10 @@
 #include "system.hpp"
+
 System::System(State _state)
 {
+    sun_data = read_from_file(4, 1);
+    sun_speed = sun_data[0];
+    sun_interval = sun_data[1];
     dragged_object = NULL;
     state = _state;
     attack_data = read_from_file(3, 1);
@@ -195,14 +199,28 @@ void System::run()
     exit(0);
 }
 
+void System::add_falling_sky_sun()
+{
+    if(sun_clock_from_sky.getElapsedTime().asSeconds() >= sun_interval)
+    {
+        sun_clock_from_sky.restart();
+        int random_sun_pos_x = get_random_number_between_a_limit(720);
+        Sun * sun = new Sun(&window, Vector2i(random_sun_pos_x + BLOCK_TOP_LEFT_CORNER_X,0),true);
+        suns.push_back(sun);
+    }
+
+
+}
+
 void System::update()
 {
     handle_cooldown();
     handle_collision();
     delete_projectile_out_of_bounds();
+    add_falling_sky_sun();
     for (auto plant : plants)
     {
-        plant->update(projectiles, num_zombies_in_row);
+        plant->update(projectiles, num_zombies_in_row,suns);
     }
     for (auto projectile : projectiles)
     {
@@ -220,6 +238,11 @@ void System::update()
     {
         state = WON;
     }
+    for (auto sun : suns)
+    {
+        sun->update(sun_speed);
+    }
+    
 }
 
 void System::handle_events()
@@ -314,6 +337,7 @@ void System ::set_background()
     item_bar_sprite.setScale(scaleX, scaleY);
     item_bar_sprite.setPosition(0, 50);
     adding_item_bar_objects();
+
 }
 
 void System::adding_item_bar_objects()
@@ -330,6 +354,39 @@ void System::adding_item_bar_objects()
     item_bar_objects.push_back(watermelon);
 }
 
+void System::add_sun_icon()
+{
+    if(!sun_icon_bg_texture.loadFromFile(PICS_PATH + SUN_ICON_BG))
+    {
+        cerr<<"cannot upload image"<<endl;
+    }
+    sun_icon_bg_sprite.setTexture(sun_icon_bg_texture);
+    sun_icon_bg_sprite.setScale(0.15,0.2);
+    sun_icon_bg_sprite.setPosition(1320,0);
+    if (!sun_texture.loadFromFile(PICS_PATH + SUN_PNG))
+    {
+        cerr << "cant upload image!"<<endl;
+    }
+    sun_sprite.setTexture(sun_texture);
+    sun_sprite.setScale(0.6, 0.6);
+    sun_sprite.setPosition(1330,0);
+    window.draw(sun_icon_bg_sprite);
+    window.draw(sun_sprite);
+    Font font;
+    if (!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
+    {
+        cerr << "cannot open the file" << endl;
+    }
+    Text text;
+    text.setFont(font);
+    text.setString("score:");
+    text.setCharacterSize(20);
+    text.setFillColor(Color::Yellow);
+    text.setPosition(1335, 65);
+    window.draw(text);
+
+}
+
 void System::render()
 {
     window.clear();
@@ -339,6 +396,7 @@ void System::render()
     case (IN_GAME):
         window.draw(background_sprite);
         window.draw(item_bar_sprite);
+        add_sun_icon();
         for (auto plant : plants)
         {
             plant->render(RECT_LENGTH, RECT_WEIDTH);
@@ -355,6 +413,11 @@ void System::render()
         {
             zombie->render();
         }
+        for (auto sun : suns)
+        {
+            sun->render();
+        }
+        
         phase_text = "PHASE: " + to_string(current_phase);
         write_phase_text(phase_text);
         break;

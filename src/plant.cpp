@@ -137,7 +137,7 @@ void Watermelon::render(int bg_pos_x, int bg_pos_y)
     window_ptr->draw(plant_sprite);
 }
 
-void PeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
+void PeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns)
 {
     plantElapsed = plantClock.getElapsedTime();
     if (plantElapsed.asSeconds() >= hit_rate)
@@ -155,7 +155,7 @@ void PeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombi
     }
 }
 
-void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
+void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns)
 {
     plantElapsed = plantClock.getElapsedTime();
     if (plantElapsed.asSeconds() >= hit_rate)
@@ -172,15 +172,25 @@ void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_z
     }
 }
 
-void Walnut::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
+void Walnut::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns)
 {
 }
 
-void Sunflower::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
+void Sunflower::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns)
 {
+    sunElapsed = sunClock.getElapsedTime();
+    if(sunElapsed.asSeconds() >= hit_rate)
+    {
+        sunClock.restart();
+        sun_pos.y = pos.y + 55;
+        sun_pos.x = pos.x -15;
+        Sun *sun = new Sun(window_ptr,sun_pos,false);
+        suns.push_back(sun);
+    }
+
 }
 
-void Watermelon::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row)
+void Watermelon::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns)
 {
 }
 

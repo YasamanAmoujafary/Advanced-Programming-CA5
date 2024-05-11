@@ -1,5 +1,6 @@
 #pragma once
-#include "utilities.hpp"
+//#include "utilities.hpp"p
+#include "sun.hpp"
 
 class Zombie
 {
