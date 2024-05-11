@@ -10,7 +10,7 @@ void Projectile::update()
     if (projectile_clock.getElapsedTime().asMilliseconds() > 20)
     {
         projectile_clock.restart();
-        pos.x += speed * 10;
+        pos.x += speed;
         projectile_sprite.setPosition(pos.x, pos.y);
     }
 }

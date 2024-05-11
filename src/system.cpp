@@ -282,6 +282,7 @@ void System::render()
         if (!lost_texture.loadFromFile(PICS_PATH + GAMEOVER_SCREEN_PNG))
             cerr << "Can't open the file" << endl;
         lost_sprite.setTexture(lost_texture);
+        lost_sprite.setScale(3,1.9);
         window.draw(lost_sprite);
         break;
     case (EXIT):

@@ -4,10 +4,12 @@ void Zombie::render()
     window_ptr->draw(zombie_sprite);
 }
 
-NormalZombie::NormalZombie(RenderWindow *_window_ptr, Vector2i _pos,int _row)
+NormalZombie::NormalZombie(RenderWindow *_window_ptr, Vector2i _pos, int _row)
     : Zombie(_window_ptr)
 {
-    row = _row;
+  
+
+        row = _row;
     zombie_pos.x = _pos.x;
     zombie_pos.y = _pos.y;
     zombie_sprite.setPosition(_pos.x, _pos.y);
@@ -31,7 +33,7 @@ NormalZombie::NormalZombie(RenderWindow *_window_ptr, Vector2i _pos,int _row)
 void NormalZombie::update()
 {
     Time zombie_animation_elapsed = animation_clock.getElapsedTime();
-    if (zombie_animation_elapsed.asMilliseconds() >= 100)
+    if (zombie_animation_elapsed.asMilliseconds() >= 50)
     {
         animation_clock.restart();
         current_animation_rect_number = (current_animation_rect_number + 1) % 46;
@@ -41,8 +43,13 @@ void NormalZombie::update()
         rect.left = walking_zombie_animation_poses[current_animation_rect_number];
         zombie_sprite.setTextureRect(rect);
     }
+    if (zombie_clock.getElapsedTime().asMilliseconds() > 300)
+    {
+        zombie_clock.restart();
+        zombie_pos.x -= speed;
+        zombie_sprite.setPosition(zombie_pos.x, zombie_pos.y);
+    }
 }
-
 
 GiantZombie::GiantZombie(RenderWindow *_window_ptr, Vector2i _pos, int _row)
     : Zombie(_window_ptr)
@@ -66,7 +73,6 @@ GiantZombie::GiantZombie(RenderWindow *_window_ptr, Vector2i _pos, int _row)
     {
         walking_zombie_animation_poses[i] = walking_zombie_animation_poses[i - 1] + 315;
     }
-    
 }
 
 void GiantZombie::update()
@@ -81,5 +87,11 @@ void GiantZombie::update()
         rect.height = 250;
         rect.left = walking_zombie_animation_poses[current_animation_rect_number];
         zombie_sprite.setTextureRect(rect);
+    }
+    if (giant_zombie_clock.getElapsedTime().asMilliseconds() > 300)
+    {
+        giant_zombie_clock.restart();
+        zombie_pos.x -= speed;
+        zombie_sprite.setPosition(zombie_pos.x, zombie_pos.y);
     }
 }
