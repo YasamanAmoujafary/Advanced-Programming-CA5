@@ -14,6 +14,7 @@ System::System(State _state)
         num_zombies_per_phase.push_back(attack_data[2] + attack_data[3] * i);
     current_phase = 0;
     set_background();
+    balance = 50;
     for (int i = 0; i < NUM_OF_ROWS; i++)
     {
         num_zombies_in_row.push_back(0);
@@ -54,7 +55,7 @@ void System::handle_cooldown()
     }
 }
 
-void System::handle_attack_wave()
+void System::generate_zombie_random_times()
 {
     if (systemClock.getElapsedTime().asSeconds() >= attack_data[1])
     {
@@ -68,7 +69,12 @@ void System::handle_attack_wave()
         }
         sort(zombie_arrival_time.begin(), zombie_arrival_time.end());
     }
+}
 
+void System::generate_zombies()
+{
+    if(current_phase == attack_data[0]/attack_data[1])
+        return;
     for (int i = 0; i < zombie_arrival_time.size(); i++)
     {
         if (zombie_arrival_time[i] <= systemClock.getElapsedTime().asSeconds() && zombie_arrival_time[i] != -1)
@@ -93,6 +99,12 @@ void System::handle_attack_wave()
             }
         }
     }
+}
+
+void System::handle_attack_wave()
+{
+    generate_zombie_random_times();
+    generate_zombies();
 }
 
 void System::handle_zombie_projectile_collision()
@@ -187,45 +199,168 @@ void System::handle_collision()
     handle_zombie_plant_collision();
 }
 
+void System::gameover_render()
+{
+    Font font;
+    if (!font.loadFromFile(FONTS_PATH + GAME_OVER_FONT))
+    {
+        cerr << ERROR_MESSAGE << endl;
+    }
+
+    Text text1;
+    text1.setFont(font);
+    text1.setString("ZOMBIES");
+    text1.setFillColor(Color::Green);
+    text1.setCharacterSize(80);
+    text1.setPosition(500, 100);
+
+    Text text2;
+    text2.setFont(font);
+    text2.setString("ATE YOUR");
+    text2.setFillColor(Color::Green);
+    text2.setCharacterSize(80);
+    text2.setPosition(500, 250);
+
+    Text text3;
+    text3.setFont(font);
+    text3.setString("BRAIN!");
+    text3.setFillColor(Color::Green);
+    text3.setCharacterSize(80);
+    text3.setPosition(520, 400);
+    window.draw(text1);
+    window.display();
+    sleep(1);
+    window.draw(text2);
+    window.display();
+    sleep(1);
+    window.draw(text3);
+    window.display();
+}
+
+void System::handle_events_win_or_lose()
+{
+    Event event;
+    while (window.pollEvent(event))
+    {
+        switch (event.type)
+        {
+        case (Event::KeyPressed):
+            if (event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+            break;
+        case (Event::Closed):
+            window.close();
+            break;
+        }
+    }
+}
+
+void System::win_render()
+{
+    if (!win_texture.loadFromFile(PICS_PATH + WIN_SCREEN_PNG))
+        cerr << ERROR_MESSAGE << endl;
+    win_sprite.setTexture(win_texture);
+    win_sprite.setScale(0.3, 0.3);
+    window.draw(win_sprite);
+    window.display();
+}
+
 void System::run()
 {
     while (window.isOpen() && state != EXIT)
     {
-        handle_attack_wave();
-        update();
-        handle_events();
-        render();
+        switch (state)
+        {
+        case IN_GAME:
+            handle_attack_wave();
+            update();
+            handle_events();
+            render();
+            window.display();
+            break;
+        case GAMEOVER:
+            gameover_render();
+            handle_events_win_or_lose();
+            break;
+        case WON:
+            win_render();
+            handle_events_win_or_lose();
+            break;
+        }
     }
-    exit(0);
+    window.close();
 }
 
 void System::add_falling_sky_sun()
 {
-    if(sun_clock_from_sky.getElapsedTime().asSeconds() >= sun_interval)
+    if (sun_clock_from_sky.getElapsedTime().asSeconds() >= sun_interval)
     {
         sun_clock_from_sky.restart();
         int random_sun_pos_x = get_random_number_between_a_limit(720);
-        Sun * sun = new Sun(&window, Vector2i(random_sun_pos_x + BLOCK_TOP_LEFT_CORNER_X,0),true);
+        Sun *sun = new Sun(&window, Vector2i(random_sun_pos_x + BLOCK_TOP_LEFT_CORNER_X, 0), true);
         suns.push_back(sun);
     }
-
-
 }
 
-void System::update()
+void System::update_suns()
 {
-    handle_cooldown();
-    handle_collision();
-    delete_projectile_out_of_bounds();
-    add_falling_sky_sun();
-    for (auto plant : plants)
+    for (auto sun : suns)
     {
-        plant->update(projectiles, num_zombies_in_row,suns);
+        sun->update(sun_speed);
     }
-    for (auto projectile : projectiles)
+
+    for (int i = 0; i < suns.size(); i++)
     {
-        projectile->update();
+        if (!suns[i]->get_in_motion())
+        {
+            if (suns[i]->finished_waiting())
+            {
+                auto save_s = suns[i];
+                suns.erase(suns.begin() + i);
+                delete save_s;
+                i--;
+            }
+        }
     }
+}
+
+Zombie* System::find_nearest_zombie(int plant_row, int plant_pos_x)
+{
+    vector<int > zombies_pos_x;
+    for(auto zombie : zombies)
+    {
+        if(zombie->get_row() == plant_row && zombie->get_pos_x() >= plant_pos_x)
+        {
+            zombies_pos_x.push_back(zombie->get_pos_x());
+        }
+    }
+    if(zombies_pos_x.empty())
+        return NULL;
+    sort(zombies_pos_x.begin(), zombies_pos_x.end());
+    for(auto zombie : zombies)
+    {
+        if(zombies_pos_x[0] == zombie->get_pos_x())
+        {
+            return zombie;
+        }
+    }
+    return NULL;
+}
+
+void System::update_plants()
+{
+        for (auto plant : plants)
+        {
+            int plant_row = plant->get_row();
+            int plant_pos_x = plant->get_pos().x;
+            plant->update(projectiles, num_zombies_in_row, suns,find_nearest_zombie(plant_row,plant_pos_x));
+        }
+}
+
+void System::update_zombies()
+{
     for (auto zombie : zombies)
     {
         zombie->update();
@@ -234,15 +369,101 @@ void System::update()
             state = GAMEOVER;
         }
     }
-    if (current_phase == attack_data[0] / attack_data[1])
+}
+
+void System::update_projectiles()
+{
+    for (auto projectile : projectiles)
+    {
+        projectile->update();
+    }
+}
+
+void System::update()
+{
+    handle_cooldown();
+    handle_collision();
+    delete_projectile_out_of_bounds();
+    add_falling_sky_sun();
+    update_plants();
+    update_projectiles();
+    update_zombies();
+    update_suns();
+
+    if (current_phase == attack_data[0] / attack_data[1] && zombies.empty())
     {
         state = WON;
     }
-    for (auto sun : suns)
+}
+
+void System::select_plant_from_item_bar(Vector2i mousePosition)
+{
+    if (mousePosition.x > 0 && mousePosition.x < ITEM_BAR_LENGTH)
     {
-        sun->update(sun_speed);
+        if (mousePosition.y > FIRST_ITEM_BAR_POS_Y && mousePosition.y < SECOND_ITEM_BAR_POS_Y)
+        {
+            dragged_object = new Sunflower(&window, SUNFLOWER_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
+        }
+        else if (mousePosition.y > SECOND_ITEM_BAR_POS_Y && mousePosition.y < THIRD_ITEM_BAR_POS_Y)
+        {
+            dragged_object = new Walnut(&window, WALLNUT_PNG, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
+        }
+        else if (mousePosition.y > THIRD_ITEM_BAR_POS_Y && mousePosition.y < FORTH_ITEM_BAR_POS_Y)
+        {
+            dragged_object = new PeaShooter(&window, PEASHOOTER_PNG, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
+        }
+        else if (mousePosition.y > FORTH_ITEM_BAR_POS_Y && mousePosition.y < FIFTH_ITEM_BAR_POS_Y)
+        {
+            dragged_object = new SnowPeaShooter(&window, SNOW_PEASHOOTER_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+        }
+        else if (mousePosition.y > FIFTH_ITEM_BAR_POS_Y && mousePosition.y < ITEM_BAR_WEIDTH + FIRST_ITEM_BAR_POS_Y)
+        {
+            dragged_object = new Watermelon(&window, WATERMELON_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
+        }
+        if (dragged_object->get_price() <= balance)
+        {
+            balance -= dragged_object->get_price();
+        }
+        else
+        {
+            dragged_object = NULL;
+        }
     }
-    
+}
+
+void System::plant_selected_item_from_item_bar(Vector2i mousePosition)
+{
+    pair<Vector2i, bool> center_pos_and_if_in_board;
+    center_pos_and_if_in_board = get_center_block_position(mousePosition);
+    if (center_pos_and_if_in_board.second)
+    {
+        dragged_object->change_pos(center_pos_and_if_in_board.first.x, center_pos_and_if_in_board.first.y);
+        for (auto item_bar_object : item_bar_objects)
+        {
+            if (item_bar_object->get_plant_name() == dragged_object->get_plant_name() && !item_bar_object->get_is_in_cooldown())
+            {
+                item_bar_object->start_timer();
+                item_bar_object->change_is_in_cooldown();
+                plants.push_back(dragged_object);
+            }
+        }
+        dragged_object = NULL;
+    }
+}
+
+void System::collect_sun(Vector2i mousePosition)
+{
+    for (int i = 0; i < suns.size(); i++)
+    {
+        if (suns[i]->get_sprite().getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+        {
+            balance += SUN_PRICE;
+            auto save_s = suns[i];
+            suns.erase(suns.begin() + i);
+            delete save_s;
+            i--;
+        }
+    }
 }
 
 void System::handle_events()
@@ -267,29 +488,8 @@ void System::handle_events()
             if (event.mouseButton.button == Mouse::Left)
             {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                if (mousePosition.x > 0 && mousePosition.x < ITEM_BAR_LENGTH)
-                {
-                    if (mousePosition.y > FIRST_ITEM_BAR_POS_Y && mousePosition.y < SECOND_ITEM_BAR_POS_Y)
-                    {
-                        dragged_object = new Sunflower(&window, SUNFLOWER_PNG, Vector2i(0, FIRST_ITEM_BAR_POS_Y));
-                    }
-                    else if (mousePosition.y > SECOND_ITEM_BAR_POS_Y && mousePosition.y < THIRD_ITEM_BAR_POS_Y)
-                    {
-                        dragged_object = new Walnut(&window, WALLNUT_PNG, Vector2i(0, SECOND_ITEM_BAR_POS_Y));
-                    }
-                    else if (mousePosition.y > THIRD_ITEM_BAR_POS_Y && mousePosition.y < FORTH_ITEM_BAR_POS_Y)
-                    {
-                        dragged_object = new PeaShooter(&window, PEASHOOTER_PNG, Vector2i(0, THIRD_ITEM_BAR_POS_Y));
-                    }
-                    else if (mousePosition.y > FORTH_ITEM_BAR_POS_Y && mousePosition.y < FIFTH_ITEM_BAR_POS_Y)
-                    {
-                        dragged_object = new SnowPeaShooter(&window, SNOW_PEASHOOTER_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
-                    }
-                    else if (mousePosition.y > FIFTH_ITEM_BAR_POS_Y && mousePosition.y < ITEM_BAR_WEIDTH + FIRST_ITEM_BAR_POS_Y)
-                    {
-                        dragged_object = new Watermelon(&window, WATERMELON_PNG, Vector2i(0, FORTH_ITEM_BAR_POS_Y));
-                    }
-                }
+                select_plant_from_item_bar(mousePosition);
+                collect_sun(mousePosition);
             }
             break;
 
@@ -297,22 +497,7 @@ void System::handle_events()
             if (event.mouseButton.button == Mouse::Left && dragged_object != NULL)
             {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                pair<Vector2i, bool> center_pos_and_if_in_board;
-                center_pos_and_if_in_board = get_center_block_position(mousePosition);
-                if (center_pos_and_if_in_board.second)
-                {
-                    dragged_object->change_pos(center_pos_and_if_in_board.first.x, center_pos_and_if_in_board.first.y);
-                    for (auto item_bar_object : item_bar_objects)
-                    {
-                        if (item_bar_object->get_plant_name() == dragged_object->get_plant_name() && !item_bar_object->get_is_in_cooldown())
-                        {
-                            item_bar_object->start_timer();
-                            item_bar_object->change_is_in_cooldown();
-                            plants.push_back(dragged_object);
-                        }
-                    }
-                    dragged_object = NULL;
-                }
+                plant_selected_item_from_item_bar(mousePosition);
                 break;
             }
         }
@@ -337,7 +522,6 @@ void System ::set_background()
     item_bar_sprite.setScale(scaleX, scaleY);
     item_bar_sprite.setPosition(0, 50);
     adding_item_bar_objects();
-
 }
 
 void System::adding_item_bar_objects()
@@ -356,93 +540,119 @@ void System::adding_item_bar_objects()
 
 void System::add_sun_icon()
 {
-    if(!sun_icon_bg_texture.loadFromFile(PICS_PATH + SUN_ICON_BG))
+    if (!sun_icon_bg_texture.loadFromFile(PICS_PATH + SUN_ICON_BG))
     {
-        cerr<<"cannot upload image"<<endl;
+        cerr << ERROR_MESSAGE << endl;
     }
     sun_icon_bg_sprite.setTexture(sun_icon_bg_texture);
-    sun_icon_bg_sprite.setScale(0.15,0.2);
-    sun_icon_bg_sprite.setPosition(1320,0);
+    sun_icon_bg_sprite.setScale(0.15, 0.2);
+    sun_icon_bg_sprite.setPosition(1320, 0);
     if (!sun_texture.loadFromFile(PICS_PATH + SUN_PNG))
     {
-        cerr << "cant upload image!"<<endl;
+        cerr << ERROR_MESSAGE << endl;
     }
     sun_sprite.setTexture(sun_texture);
     sun_sprite.setScale(0.6, 0.6);
-    sun_sprite.setPosition(1330,0);
+    sun_sprite.setPosition(1330, 0);
     window.draw(sun_icon_bg_sprite);
     window.draw(sun_sprite);
     Font font;
     if (!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
     {
-        cerr << "cannot open the file" << endl;
+        cerr << ERROR_MESSAGE << endl;
     }
     Text text;
     text.setFont(font);
-    text.setString("score:");
+    text.setString(to_string(balance));
     text.setCharacterSize(20);
     text.setFillColor(Color::Yellow);
-    text.setPosition(1335, 65);
+    text.setPosition(1350, 65);
     window.draw(text);
-
 }
 
 void System::render()
 {
     window.clear();
-    string phase_text;
-    switch (state)
+    window.draw(background_sprite);
+    window.draw(item_bar_sprite);
+    add_sun_icon();
+    for (auto plant : plants)
     {
-    case (IN_GAME):
-        window.draw(background_sprite);
-        window.draw(item_bar_sprite);
-        add_sun_icon();
-        for (auto plant : plants)
-        {
-            plant->render(RECT_LENGTH, RECT_WEIDTH);
-        }
-        for (auto item_bar_object : item_bar_objects)
-        {
-            item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
-        }
-        for (auto projectile : projectiles)
-        {
-            projectile->render();
-        }
-        for (auto zombie : zombies)
-        {
-            zombie->render();
-        }
-        for (auto sun : suns)
-        {
-            sun->render();
-        }
-        
-        phase_text = "PHASE: " + to_string(current_phase);
-        write_phase_text(phase_text);
-        break;
-    case (WON):
-
-        if (!win_texture.loadFromFile(PICS_PATH + WIN_SCREEN_PNG))
-            cerr << ERROR_MESSAGE << endl;
-        win_sprite.setTexture(win_texture);
-        win_sprite.setScale(0.3, 0.3);
-        window.draw(win_sprite);
-        break;
-    case (GAMEOVER):
-
-        if (!lost_texture.loadFromFile(PICS_PATH + GAMEOVER_SCREEN_PNG))
-            cerr << ERROR_MESSAGE << endl;
-        lost_sprite.setTexture(lost_texture);
-        lost_sprite.setScale(3, 1.9);
-        window.draw(lost_sprite);
-        break;
-    case (EXIT):
-        break;
-    default:
-        break;
+        plant->render(RECT_LENGTH, RECT_WEIDTH);
     }
-    window.display();
+    for (auto item_bar_object : item_bar_objects)
+    {
+        item_bar_object->render(ITEM_BAR_LENGTH, ITEM_BAR_WEIDTH / NUM_OF_ITEMS);
+    }
+    for (auto projectile : projectiles)
+    {
+        projectile->render();
+    }
+    for (auto zombie : zombies)
+    {
+        zombie->render();
+    }
+    for (auto sun : suns)
+    {
+        sun->render();
+    }
+    write_phase_text("PHASE: " + to_string(current_phase));
+    write_cooldown_text();
+    write_price_text();
+}
+
+void System::write_cooldown_text()
+{
+    Font font;
+    if (!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
+    {
+        cerr << ERROR_MESSAGE << endl;
+    }
+    Text text;
+    text.setFont(font);
+    for (auto item_bar_object : item_bar_objects)
+    {
+        if (item_bar_object->get_is_in_cooldown())
+        {
+            double remaining_cooldown_time;
+            remaining_cooldown_time = item_bar_object->get_cooldown() - item_bar_object->get_cooldown_clock().getElapsedTime().asSeconds();
+            ostringstream stream;
+            stream << fixed << setprecision(1) << remaining_cooldown_time;
+            text.setString(stream.str());
+            text.setCharacterSize(20);
+            text.setFillColor(Color::Red);
+            text.setPosition(item_bar_object->get_pos().x + 30, item_bar_object->get_pos().y + 30);
+            window.draw(text);
+        }
+    }
+}
+
+void System::write_price_text()
+{
+
+    Font font;
+    if (!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
+    {
+        cerr << ERROR_MESSAGE << endl;
+    }
+    Text text;
+    text.setFont(font);
+    RectangleShape background;
+    background.setFillColor(Color(139, 69, 19));
+    for (auto item_bar_object : item_bar_objects)
+    {
+        ostringstream stream;
+        stream << fixed << setprecision(1) << item_bar_object->get_price();
+        ;
+        text.setString(stream.str());
+        text.setCharacterSize(30);
+        text.setFillColor(Color::Black);
+        background.setSize(Vector2f(text.getGlobalBounds().width + 13, text.getGlobalBounds().height - 8));
+        background.setPosition(item_bar_object->get_pos().x, item_bar_object->get_pos().y + 75);
+        text.setPosition(item_bar_object->get_pos().x, item_bar_object->get_pos().y + 67);
+        window.draw(background);
+        window.draw(text);
+    }
 }
 
 void System::write_phase_text(string phase_text)
@@ -450,14 +660,19 @@ void System::write_phase_text(string phase_text)
     Font font;
     if (!font.loadFromFile(FONTS_PATH + PHASE_FONT_TTF))
     {
-        cerr << "cannot open the file" << endl;
+        cerr << ERROR_MESSAGE << endl;
     }
     Text text;
+    RectangleShape background;
+    background.setFillColor(Color(139, 69, 19));
     text.setFont(font);
     text.setString(phase_text);
     text.setCharacterSize(30);
+    background.setSize(Vector2f(text.getGlobalBounds().width + 15, text.getGlobalBounds().height + 12));
+    background.setPosition(0, 0);
     text.setFillColor(Color::Black);
     text.setPosition(0, 0);
+    window.draw(background);
     window.draw(text);
 }
 

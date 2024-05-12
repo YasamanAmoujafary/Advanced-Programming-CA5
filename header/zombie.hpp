@@ -1,5 +1,4 @@
 #pragma once
-//#include "utilities.hpp"p
 #include "sun.hpp"
 
 class Zombie
@@ -22,6 +21,7 @@ public:
     void make_stable() { is_moving = false; }
     bool get_is_moving() { return is_moving; }
     void set_in_motion() { is_moving = true; }
+    int get_speed(){return speed;}
 protected:
     Texture zombie_texture;
     Sprite zombie_sprite;

@@ -8,7 +8,7 @@ public:
     virtual void render(int bg_pos_x, int bg_pos_y) = 0;
     virtual void set_normal_plant_png() = 0;
     virtual void set_cool_downed_plant_png() = 0;
-    virtual void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns) = 0;
+    virtual void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns,Zombie* _zombie_to_be_collided) = 0;
     void change_pos(int x, int y);
     void update_cooldown();
     Vector2i get_pos() { return pos; }
@@ -21,6 +21,9 @@ public:
     bool get_is_in_cooldown() { return is_in_cooldown; }
     void change_is_in_cooldown() { is_in_cooldown = true; }
     int get_health(){return health;}
+    int get_price(){return price;}
+    Clock get_cooldown_clock(){return plantClock;}
+    int get_cooldown(){return cooldown;}
 protected:
     Texture plant_texture;
     Sprite plant_sprite;
@@ -33,7 +36,6 @@ protected:
     bool is_in_cooldown;
     int row;
     RenderWindow *window_ptr;
-    Time plantElapsed;
     Clock plantClock;
     Vector2i pos;
 };
@@ -45,7 +47,7 @@ public:
     void set_normal_plant_png() { plant_png_path = WALLNUT_PNG; }
     void set_cool_downed_plant_png() { plant_png_path = WALLNUT_COOLDOWN_PNG; }
     void render(int bg_pos_x, int bg_pos_y);
-    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns);
+    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns,Zombie* _zombie_to_be_collided);
 
 private:
 };
@@ -57,7 +59,7 @@ public:
     void render(int bg_pos_x, int bg_pos_y);
     void set_normal_plant_png() { plant_png_path = SUNFLOWER_PNG; }
     void set_cool_downed_plant_png() { plant_png_path = SUNFLOWER_COOLDOWN_PNG; }
-    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns);
+    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns,Zombie* _zombie_to_be_collided);
 
 private:
     Clock sunClock;
@@ -72,7 +74,7 @@ public:
     void render(int bg_pos_x, int bg_pos_y);
     void set_normal_plant_png() { plant_png_path = PEASHOOTER_PNG; }
     void set_cool_downed_plant_png() { plant_png_path = PEASHOOTER_COOLDOWN_PNG; }
-    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns);
+    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns,Zombie* _zombie_to_be_collided);
 
 private:
 };
@@ -84,7 +86,7 @@ public:
     void render(int bg_pos_x, int bg_pos_y);
     void set_normal_plant_png() { plant_png_path = SNOW_PEASHOOTER_PNG; }
     void set_cool_downed_plant_png() { plant_png_path = SNOW_PEASHOOTER_COOLDOWN_PNG; }
-    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns);
+    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns,Zombie* _zombie_to_be_collided);
 
 private:
 };
@@ -96,7 +98,7 @@ public:
     void render(int bg_pos_x, int bg_pos_y);
     void set_normal_plant_png() { plant_png_path = WATERMELON_PNG; }
     void set_cool_downed_plant_png() { plant_png_path = WATERMELON_COOLDOWN_PNG; }
-    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns);
+    void update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns,Zombie* _zombie_to_be_collided);
 
 private:
 };

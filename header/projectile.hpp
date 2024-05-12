@@ -12,10 +12,13 @@ public:
     FloatRect get_rect() { return projectile_sprite.getGlobalBounds(); }
     int get_damage() { return damage; }
     string get_projectile_name() { return projectile_name; }
-
+    void set_zombie_collision(Zombie *_nearest_zombie) { nearest_zombie = _nearest_zombie; }
+    void set_time_for_watermelon_motion(double time_for_watermelon_motion) {Time_for_watermelon_motion = time_for_watermelon_motion;}
+    int get_speed(){return speed;}
 protected:
     int damage;
     int speed;
+    double Time_for_watermelon_motion = 0;
     vector<int> file_data;
     string projectile_name;
     RenderWindow *window_ptr;
@@ -23,6 +26,8 @@ protected:
     Sprite projectile_sprite;
     Vector2i pos;
     Clock projectile_clock;
+    Clock motion_watermelon_clock;
+    Zombie *nearest_zombie;
 };
 
 class Regular_projectile : public Projectile
@@ -37,6 +42,14 @@ class Snow_projectile : public Projectile
 {
 public:
     Snow_projectile(RenderWindow *_window_ptr, Vector2i _pos, string projectile_type_png);
+
+private:
+};
+
+class Watermelon_projectile : public Projectile
+{
+public:
+    Watermelon_projectile(RenderWindow *_window_ptr, Vector2i _pos, string projectile_type_png);
 
 private:
 };

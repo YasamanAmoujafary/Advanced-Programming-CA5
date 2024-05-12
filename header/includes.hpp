@@ -13,6 +13,8 @@
 #include<unistd.h>
 #include<chrono>
 #include<random>
+#include <sstream> 
+#include <iomanip>
 using namespace std;
 using namespace sf;
 
@@ -29,15 +31,12 @@ const int SECOND_ITEM_BAR_POS_Y = 150;
 const int THIRD_ITEM_BAR_POS_Y = 250;
 const int FORTH_ITEM_BAR_POS_Y = 350;
 const int FIFTH_ITEM_BAR_POS_Y = 450;
-
 const int FIRST_BLOCK_TOP_POS_Y = 70;
 const int SECOND_BLOCK_TOP_POS_Y = 170;
 const int THIRD_BLOCK_TOP_POS_Y = 270;
 const int FORTH_BLOCK_TOP_POS_Y = 370;
 const int FIFTH_BLOCK_TOP_POS_Y = 470;
 const int FIFTH_BLOCK_DOWN_POS_Y = 570;
-
-
 const int NUM_OF_ITEMS = 5;
 const int NUM_OF_VERTICAL_BLOCKS = 6;
 const int NUM_OF_HORIZENTAL_BLOCKS = 10;
@@ -46,6 +45,7 @@ const int PLAY_GROUND_WIDTH = 570;
 const int NUM_OF_ROWS = 5;
 const int ZOMBIE_IN_SNOW_TIME = 5;
 const int SUN_PRICE = 25;
+const int SUN_WAITING_TIME = 5;
 const string PATH_GAME_SETTING = "./GameSetting.csv";
 const string PICS_PATH = "./images/";
 const string MUSIC_PATH = "./music/";
@@ -57,12 +57,10 @@ const string SUNFLOWER_PNG = "Sunflower.png";
 const string WALLNUT_PNG = "Wallnut_body.png";
 const string PEASHOOTER_PNG = "Peashooter.png";
 const string SNOW_PEASHOOTER_PNG = "snowpeashooter.png";
-const string WATERMELON_PNG = "watermelon.png";
 const string SUNFLOWER_COOLDOWN_PNG = "Sunflower_cooldown.png";
 const string WALLNUT_COOLDOWN_PNG = "Walnut_cooldown.png";
 const string PEASHOOTER_COOLDOWN_PNG = "Peashooter_cooldown.png";
 const string SNOW_PEASHOOTER_COOLDOWN_PNG = "snowpeashooter_cooldown.png";
-const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
 const string REGULAR_PROJECTILE_PNG = "regular_projectile.png";
 const string SNOW_PROJECTILE_PNG= "snow_projectile.png";
 const string REGULAR_PROJECTILE_NAME = "regular_projectile";
@@ -75,15 +73,19 @@ const string ITEM_BAR_PNG = "Item_Bar.png";
 const string SUN_PNG = "sun.png";
 const string SUN_ICON_BG = "sun_icon_bg.png";
 const string PHASE_FONT_TTF = "Jersey25Charted-Regular.ttf";
+const string GAME_OVER_FONT = "Creepster-Regular.ttf";
 const string WIN_SCREEN_PNG = "Winning_Pic.png";
-const string GAMEOVER_SCREEN_PNG = "Losing_Message.png";
 const string ERROR_MESSAGE = "Can't open the file"; 
+
 const string SUNFLOWER_NAME = "sunflower";
 const string PEASHOOTER_NAME = "peashooter";
 const string SNOWPEASHOOTER_NAME = "snowpeashooter";
 const string WALNUT_NAME = "walnut";
-const string WATERMELON_NAME = "watermelon";
 
+const string WATERMELON_NAME = "watermelon";
+const string WATERMELON_PROJECTILE_PNG = "melonpult_melon.png";
+const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
+const string WATERMELON_PNG = "watermelon.png";
 
 
 #endif

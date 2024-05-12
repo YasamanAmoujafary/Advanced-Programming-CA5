@@ -137,10 +137,9 @@ void Watermelon::render(int bg_pos_x, int bg_pos_y)
     window_ptr->draw(plant_sprite);
 }
 
-void PeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns)
+void PeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns , Zombie* _zombie_to_be_collided)
 {
-    plantElapsed = plantClock.getElapsedTime();
-    if (plantElapsed.asSeconds() >= hit_rate)
+    if (plantClock.getElapsedTime().asSeconds() >= hit_rate)
     {
         plantClock.restart();
         Vector2i projectile_pos;
@@ -155,10 +154,9 @@ void PeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombi
     }
 }
 
-void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row,vector<Sun *> &suns)
+void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns, Zombie* _zombie_to_be_collided)
 {
-    plantElapsed = plantClock.getElapsedTime();
-    if (plantElapsed.asSeconds() >= hit_rate)
+    if (plantClock.getElapsedTime().asSeconds() >= hit_rate)
     {
         plantClock.restart();
         Vector2i projectile_pos;
@@ -172,26 +170,52 @@ void SnowPeaShooter::update(vector<Projectile *> &projectiles, vector<int> num_z
     }
 }
 
-void Walnut::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns)
+void Walnut::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns, Zombie* _zombie_to_be_collided)
 {
 }
 
-void Sunflower::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns)
+void Sunflower::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns, Zombie* _zombie_to_be_collided)
 {
     sunElapsed = sunClock.getElapsedTime();
-    if(sunElapsed.asSeconds() >= hit_rate)
+    bool already_planted_sun = false;
+    if (sunElapsed.asSeconds() >= hit_rate)
     {
         sunClock.restart();
         sun_pos.y = pos.y + 55;
-        sun_pos.x = pos.x -15;
-        Sun *sun = new Sun(window_ptr,sun_pos,false);
-        suns.push_back(sun);
+        sun_pos.x = pos.x - 15;
+        for (int i = 0; i < suns.size(); i++)
+        {
+            if (suns[i]->get_pos() == sun_pos)
+            {
+                already_planted_sun = true;
+            }
+        }
+        if (!already_planted_sun)
+        {
+            Sun *sun = new Sun(window_ptr, sun_pos, false);
+            suns.push_back(sun);
+        }
     }
-
 }
 
-void Watermelon::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns)
+void Watermelon::update(vector<Projectile *> &projectiles, vector<int> num_zombies_in_row, vector<Sun *> &suns, Zombie* _zombie_to_be_collided)
 {
+    if (plantClock.getElapsedTime().asSeconds() >= hit_rate)
+    {
+        plantClock.restart();
+        Vector2i projectile_pos;
+        projectile_pos.y = pos.y ;
+        projectile_pos.x = pos.x ; // change it to make it sexier
+        if (num_zombies_in_row[row - 1] != 0)
+        {
+            // cout<<"watermelon created"<<endl;
+            Watermelon_projectile *watermelon_projectile = new Watermelon_projectile(window_ptr, projectile_pos, WATERMELON_PROJECTILE_PNG);
+            watermelon_projectile->set_zombie_collision(_zombie_to_be_collided);
+            double time_in_motion =  (double)(_zombie_to_be_collided->get_pos_x() - projectile_pos.x)/(_zombie_to_be_collided->get_speed()+watermelon_projectile->get_speed());
+            watermelon_projectile->set_time_for_watermelon_motion(time_in_motion);
+            projectiles.push_back(watermelon_projectile);
+        }
+    }
 }
 
 void Plant::change_pos(int x, int y)
@@ -213,8 +237,7 @@ void Plant::change_pos(int x, int y)
 
 void Plant::update_cooldown()
 {
-    plantElapsed = plantClock.getElapsedTime();
-    if (cooldown <= plantElapsed.asSeconds())
+    if (cooldown <= plantClock.getElapsedTime().asSeconds())
     {
         is_in_cooldown = false;
     }

@@ -23,6 +23,7 @@ private:
     int window_height;
     int sun_speed;
     int sun_interval;
+    int balance;
     vector<Plant *> plants;
     vector<Plant *> item_bar_objects;
     vector<Plant *> cool_downed_objects;
@@ -34,7 +35,7 @@ private:
     Texture background_texture;
     Texture item_bar_texture;
     Texture lost_texture;
-    Texture win_texture;    
+    Texture win_texture;
     Texture sun_texture;
     Texture sun_icon_bg_texture;
     Sprite background_sprite;
@@ -54,6 +55,8 @@ private:
     vector<int> zombie_arrival_time;
     vector<int> num_zombies_in_row;
     int current_phase;
+    void win_render();
+    void gameover_render();
     void update();
     void render();
     void handle_events();
@@ -68,5 +71,18 @@ private:
     void delete_projectile_out_of_bounds();
     void add_falling_sky_sun();
     void add_sun_icon();
+    void generate_zombie_random_times();
+    void generate_zombies();
+    void update_plants();
+    void update_projectiles();
+    void update_zombies();
+    void update_suns();
+    void select_plant_from_item_bar(Vector2i mousePosition);
+    void plant_selected_item_from_item_bar(Vector2i mousePosition);
+    void collect_sun(Vector2i mousePosition);
+    void write_cooldown_text();
+    void write_price_text();
+    void handle_events_win_or_lose();
     pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
+    Zombie *find_nearest_zombie(int plant_row, int plant_pos_x);
 };

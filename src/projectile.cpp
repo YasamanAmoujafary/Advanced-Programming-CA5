@@ -4,14 +4,14 @@ Projectile::Projectile(RenderWindow *_window_ptr, string projectile_type_png) : 
 {
     if (!projectile_texture.loadFromFile(PICS_PATH + projectile_type_png))
     {
-        cerr << "cant upload image!";
+        cerr << ERROR_MESSAGE << endl;
     }
     projectile_sprite.setTexture(projectile_texture);
-    projectile_sprite.setScale(0.013, 0.013);
 }
 
 void Projectile::render()
 {
+    projectile_sprite.setTexture(projectile_texture);
     window_ptr->draw(projectile_sprite);
 }
 
@@ -20,7 +20,21 @@ void Projectile::update()
     if (projectile_clock.getElapsedTime().asMilliseconds() > 20)
     {
         projectile_clock.restart();
-        pos.x += speed;
+        if (projectile_name != WATERMELON_NAME)
+        {
+            pos.x += speed;
+        }
+        else
+        {
+            if (Time_for_watermelon_motion - motion_watermelon_clock.getElapsedTime().asSeconds() >= 0)
+            {
+                
+                cout<<"speed is: "<<speed<<"    "<<"Time_for_watermelon_motion"<<Time_for_watermelon_motion<<endl;
+                pos.x += speed;
+                pos.y += motion_watermelon_clock.getElapsedTime().asSeconds() * (-1) * (Time_for_watermelon_motion - motion_watermelon_clock.getElapsedTime().asSeconds());
+                cout<<pos.x<<","<<pos.y<<endl;
+            }
+        }
         projectile_sprite.setPosition(pos.x, pos.y);
     }
 }
@@ -32,6 +46,7 @@ Regular_projectile::Regular_projectile(RenderWindow *_window_ptr, Vector2i _pos,
     pos = _pos;
     projectile_sprite.setPosition(_pos.x, _pos.y);
     file_data = read_from_file(2, 1);
+    projectile_sprite.setScale(0.013, 0.013);
     damage = file_data[0];
     speed = file_data[4];
 }
@@ -43,6 +58,20 @@ Snow_projectile::Snow_projectile(RenderWindow *_window_ptr, Vector2i _pos, strin
     pos = _pos;
     projectile_sprite.setPosition(_pos.x, _pos.y);
     file_data = read_from_file(2, 2);
+    projectile_sprite.setScale(0.013, 0.013);
     damage = file_data[0];
     speed = file_data[4];
+}
+
+Watermelon_projectile::Watermelon_projectile(RenderWindow *_window_ptr, Vector2i _pos, string projectile_type_png)
+    : Projectile(_window_ptr, projectile_type_png)
+{
+    projectile_name = WATERMELON_NAME;
+    pos = _pos;
+    projectile_sprite.setPosition(_pos.x, _pos.y);
+    file_data = read_from_file(2, 2);
+    projectile_sprite.setScale(0.8, 0.8);
+    damage = file_data[0];
+    speed = file_data[4];
+    motion_watermelon_clock.restart();
 }

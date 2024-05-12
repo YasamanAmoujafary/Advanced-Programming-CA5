@@ -1,5 +1,5 @@
 GPP = g++
-GPPFLAGS = -std=c++2a -Wall -Wextra -I./header
+GPPFLAGS = -std=c++2a  -I./header
 LFLAGS = -L/files -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 SRC_DIR = src
 OBJ_DIR = obj
