@@ -48,8 +48,8 @@ const int SUN_PRICE = 25;
 const int SUN_WAITING_TIME = 5;
 const string PATH_GAME_SETTING = "./GameSetting.csv";
 const string PICS_PATH = "./images/";
-const string MUSIC_PATH = "./music/";
 const string FONTS_PATH = "./fonts/";
+const string MUSICS_PATH = "./musics/";
 const char TYPE_DELIMETER = ',';
 const char INTRO_DELIMETER = ':';
 const char DATA_DELIMETER = '-';
@@ -86,6 +86,8 @@ const string WATERMELON_NAME = "watermelon";
 const string WATERMELON_PROJECTILE_PNG = "melonpult_melon.png";
 const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
 const string WATERMELON_PNG = "watermelon.png";
+
+const string GRASS_WALK_MUSIC = "grass_walk.ogg";
 
 
 #endif

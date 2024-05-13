@@ -19,6 +19,8 @@ System::System(State _state)
     {
         num_zombies_in_row.push_back(0);
     }
+    open_grass_walk_music();
+
 }
 
 System::~System()
@@ -599,6 +601,37 @@ void System::render()
     write_phase_text("PHASE: " + to_string(current_phase));
     write_cooldown_text();
     write_price_text();
+}
+
+void System::open_grass_walk_music()
+{
+    if(!grass_walk_music.openFromFile(MUSICS_PATH + GRASS_WALK_MUSIC))
+    {
+        cerr << ERROR_MESSAGE<<endl;
+    }
+    grass_walk_music.setLoop(true);
+    grass_walk_music.play();
+    bool isMusicPlaying = true;
+    // Event event;
+    // while (window.pollEvent(event))
+    // {
+    //    if(event.type == Event::KeyPressed)
+    //    {
+    //     if(event.key.code == Keyboard::A)
+    //     {
+    //         if(isMusicPlaying)
+    //         {
+    //             grass_walk_music.pause();
+    //             isMusicPlaying = false;
+    //         }
+    //         else
+    //         {
+    //             grass_walk_music.play();
+    //             isMusicPlaying = true;
+    //         }
+    //     }
+    //    }
+    // }
 }
 
 void System::write_cooldown_text()
