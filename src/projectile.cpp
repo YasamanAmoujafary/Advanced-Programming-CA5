@@ -26,14 +26,9 @@ void Projectile::update()
         }
         else
         {
-            if (Time_for_watermelon_motion - motion_watermelon_clock.getElapsedTime().asSeconds() >= 0)
-            {
-                
-                cout<<"speed is: "<<speed<<"    "<<"Time_for_watermelon_motion"<<Time_for_watermelon_motion<<endl;
-                pos.x += speed;
-                pos.y += motion_watermelon_clock.getElapsedTime().asSeconds() * (-1) * (Time_for_watermelon_motion - motion_watermelon_clock.getElapsedTime().asSeconds());
-                cout<<pos.x<<","<<pos.y<<endl;
-            }
+            double time = motion_watermelon_clock.getElapsedTime().asSeconds();
+            pos.x = initial_pos_x + speed * time * 50;
+            pos.y = initial_pos_y + time * (time - Time_for_watermelon_motion) * 30;
         }
         projectile_sprite.setPosition(pos.x, pos.y);
     }
@@ -68,8 +63,10 @@ Watermelon_projectile::Watermelon_projectile(RenderWindow *_window_ptr, Vector2i
 {
     projectile_name = WATERMELON_NAME;
     pos = _pos;
+    initial_pos_x = pos.x;
+    initial_pos_y = pos.y;
     projectile_sprite.setPosition(_pos.x, _pos.y);
-    file_data = read_from_file(2, 2);
+    file_data = read_from_file(2, 3);
     projectile_sprite.setScale(0.8, 0.8);
     damage = file_data[0];
     speed = file_data[4];

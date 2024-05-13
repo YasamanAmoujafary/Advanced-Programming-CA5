@@ -13,12 +13,17 @@ public:
     int get_damage() { return damage; }
     string get_projectile_name() { return projectile_name; }
     void set_zombie_collision(Zombie *_nearest_zombie) { nearest_zombie = _nearest_zombie; }
-    void set_time_for_watermelon_motion(double time_for_watermelon_motion) {Time_for_watermelon_motion = time_for_watermelon_motion;}
-    int get_speed(){return speed;}
+    void set_time_for_watermelon_motion(double time_for_watermelon_motion) { Time_for_watermelon_motion = time_for_watermelon_motion; }
+    int get_speed() { return speed; }
+    bool is_end_collision_time() {return Time_for_watermelon_motion < motion_watermelon_clock.getElapsedTime().asSeconds();}
+    Zombie* get_nearest_zombie() {return nearest_zombie;}
+
 protected:
     int damage;
     int speed;
     double Time_for_watermelon_motion = 0;
+    int initial_pos_x;
+    int initial_pos_y;
     vector<int> file_data;
     string projectile_name;
     RenderWindow *window_ptr;

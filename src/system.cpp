@@ -109,10 +109,39 @@ void System::handle_attack_wave()
     generate_zombies();
 }
 
+int System::find_zombie_index(Zombie *zombie)
+{
+    for(int i=0 ; i < zombies.size() ; i++){
+        if(zombies[i] == zombie)
+        {
+            return i;
+        }
+    }
+}
+
 void System::handle_zombie_projectile_collision()
 {
     if (zombies.empty() || projectiles.empty())
         return;
+    for (int i = 0; i < projectiles.size(); i++)
+    {
+        if (projectiles[i]->get_name() == WATERMELON_NAME && projectiles[i]->is_end_collision_time())
+        {
+            auto save_p = projectiles[i];
+            Zombie* nearest_zombie = projectiles[i]->get_nearest_zombie();
+            nearest_zombie->update_health(projectiles[i]->get_damage());
+            projectiles.erase(projectiles.begin() + i);
+            if (nearest_zombie->get_health()<= 0)
+                {
+                    num_zombies_in_row[nearest_zombie->get_row() - 1]--;
+                    auto save_z = nearest_zombie;
+                    zombies.erase(zombies.begin() + find_zombie_index(nearest_zombie));
+                    delete save_z;
+                }
+            delete save_p;
+            i--;
+        }
+    }
     for (int i = 0; i < zombies.size(); i++)
     {
         for (int j = 0; j < projectiles.size(); j++)

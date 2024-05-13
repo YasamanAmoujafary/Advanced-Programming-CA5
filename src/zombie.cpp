@@ -88,7 +88,7 @@ void NormalZombie::update()
     }
     if (is_moving)
     {
-        if (zombie_clock.getElapsedTime().asMilliseconds() > 300)
+        if (zombie_clock.getElapsedTime().asMilliseconds() > 20)
         {
             zombie_clock.restart();
             zombie_pos.x -= speed;
@@ -158,7 +158,7 @@ void GiantZombie::update()
     }
     if (is_moving)
     {
-        if (giant_zombie_clock.getElapsedTime().asMilliseconds() > 300)
+        if (giant_zombie_clock.getElapsedTime().asMilliseconds() > 20)
         {
             giant_zombie_clock.restart();
             zombie_pos.x -= speed;
