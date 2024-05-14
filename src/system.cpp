@@ -389,7 +389,6 @@ void System::run()
             grass_walk_music.pause();
             if (first_won_entering)
             {
-                make_dark_bg();
                 open_victory_music();
             }
             win_render();
@@ -449,9 +448,13 @@ Zombie *System::find_nearest_zombie(int plant_row, int plant_pos_x)
     sort(zombies_pos_x.begin(), zombies_pos_x.end());
     for (auto zombie : zombies)
     {
-        if (zombies_pos_x[0] == zombie->get_pos_x())
+        if (zombie->get_row() == plant_row && zombie->get_pos_x() >= plant_pos_x)
         {
-            return zombie;
+            if(zombies_pos_x[0] == zombie->get_pos_x())
+            {
+                return zombie;
+            }
+           
         }
     }
     return NULL;
