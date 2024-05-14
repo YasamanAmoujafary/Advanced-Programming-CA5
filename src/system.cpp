@@ -19,7 +19,6 @@ System::System(State _state)
     {
         num_zombies_in_row.push_back(0);
     }
-    open_grass_walk_music();
 
 }
 
@@ -117,6 +116,7 @@ int System::find_zombie_index(Zombie *zombie)
             return i;
         }
     }
+    return 0;
 }
 
 void System::handle_zombie_projectile_collision()
@@ -300,18 +300,32 @@ void System::win_render()
 
 void System::run()
 {
+    bool first_in_game =true;
+    int count_game_over_music = 0;
     while (window.isOpen() && state != EXIT)
     {
         switch (state)
         {
         case IN_GAME:
+            if(first_in_game)
+            {
+                open_grass_walk_music();
+
+            }
             handle_attack_wave();
             update();
             handle_events();
             render();
             window.display();
+            first_in_game = false;
             break;
         case GAMEOVER:
+            count_game_over_music ++;
+            if(count_game_over_music<=3)
+            {
+                open_game_over_music();
+            }
+            grass_walk_music.pause();
             gameover_render();
             handle_events_win_or_lose();
             break;
@@ -511,8 +525,8 @@ void System::handle_events()
             if (event.key.code == Keyboard::Escape)
             {
                 window.close();
-                break;
             }
+            break;
         case (Event::Closed):
             window.close();
         case (Event::MouseButtonPressed):
@@ -529,8 +543,8 @@ void System::handle_events()
             {
                 Vector2i mousePosition = Mouse::getPosition(window);
                 plant_selected_item_from_item_bar(mousePosition);
-                break;
             }
+            break;
         }
     }
 }
@@ -640,27 +654,16 @@ void System::open_grass_walk_music()
     }
     grass_walk_music.setLoop(true);
     grass_walk_music.play();
-    bool isMusicPlaying = true;
-    // Event event;
-    // while (window.pollEvent(event))
-    // {
-    //    if(event.type == Event::KeyPressed)
-    //    {
-    //     if(event.key.code == Keyboard::A)
-    //     {
-    //         if(isMusicPlaying)
-    //         {
-    //             grass_walk_music.pause();
-    //             isMusicPlaying = false;
-    //         }
-    //         else
-    //         {
-    //             grass_walk_music.play();
-    //             isMusicPlaying = true;
-    //         }
-    //     }
-    //    }
-    // }
+}
+
+void System::open_game_over_music()
+{
+    if(!game_over_music.openFromFile(MUSICS_PATH + GAME_OVER_MUSIC))
+    {
+        cerr << ERROR_MESSAGE<<endl;
+    }
+    game_over_music.play();
+
 }
 
 void System::write_cooldown_text()

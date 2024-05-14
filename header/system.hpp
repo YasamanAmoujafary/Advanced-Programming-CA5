@@ -49,6 +49,7 @@ private:
     Clock systemClock;
     Clock sun_clock_from_sky;
     Music grass_walk_music;
+    Music game_over_music;
     vector<int> attack_data;
     vector<int> sun_data;
     vector<int> time_interval;
@@ -85,6 +86,7 @@ private:
     void write_price_text();
     void handle_events_win_or_lose();
     void open_grass_walk_music();
+    void open_game_over_music();
     int find_zombie_index(Zombie *zombie);
     pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
     Zombie *find_nearest_zombie(int plant_row, int plant_pos_x);

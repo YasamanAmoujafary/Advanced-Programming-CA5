@@ -86,8 +86,8 @@ const string WATERMELON_NAME = "watermelon";
 const string WATERMELON_PROJECTILE_PNG = "melonpult_melon.png";
 const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
 const string WATERMELON_PNG = "watermelon.png";
-
 const string GRASS_WALK_MUSIC = "grass_walk.ogg";
+const string GAME_OVER_MUSIC = "game_over.ogg";
 
 
 #endif
