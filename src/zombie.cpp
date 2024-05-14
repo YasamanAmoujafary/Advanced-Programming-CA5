@@ -140,7 +140,6 @@ void Zombie::update_texture(string zombie_png, float scale_x, float scale_y, int
     rect.height = height;
     zombie_sprite.setTexture(zombie_texture);
     zombie_sprite.setScale(scale_x, scale_y);
-    // zombie_sprite.setTextureRect(rect);
 }
 
 void GiantZombie::update()

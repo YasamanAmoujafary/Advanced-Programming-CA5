@@ -19,7 +19,6 @@ System::System(State _state)
     {
         num_zombies_in_row.push_back(0);
     }
-
 }
 
 System::~System()
@@ -65,8 +64,13 @@ void System::generate_zombie_random_times()
         zombie_arrival_time.clear();
         for (int i = 0; i < num_zombies_per_phase[current_phase - 1]; i++)
         {
-            float random_time = get_random_number_between_a_limit(attack_data[1]);
-            zombie_arrival_time.push_back(random_time);
+            if (attack_data[1] == 1)
+                zombie_arrival_time.push_back(0);
+            else
+            {
+                float random_time = get_random_number_between_a_limit(attack_data[1]);
+                zombie_arrival_time.push_back(random_time);
+            }
         }
         sort(zombie_arrival_time.begin(), zombie_arrival_time.end());
     }
@@ -74,7 +78,7 @@ void System::generate_zombie_random_times()
 
 void System::generate_zombies()
 {
-    if(current_phase == attack_data[0]/attack_data[1])
+    if (current_phase == attack_data[0] / attack_data[1])
         return;
     for (int i = 0; i < zombie_arrival_time.size(); i++)
     {
@@ -110,8 +114,9 @@ void System::handle_attack_wave()
 
 int System::find_zombie_index(Zombie *zombie)
 {
-    for(int i=0 ; i < zombies.size() ; i++){
-        if(zombies[i] == zombie)
+    for (int i = 0; i < zombies.size(); i++)
+    {
+        if (zombies[i] == zombie)
         {
             return i;
         }
@@ -128,16 +133,16 @@ void System::handle_zombie_projectile_collision()
         if (projectiles[i]->get_name() == WATERMELON_NAME && projectiles[i]->is_end_collision_time())
         {
             auto save_p = projectiles[i];
-            Zombie* nearest_zombie = projectiles[i]->get_nearest_zombie();
+            Zombie *nearest_zombie = projectiles[i]->get_nearest_zombie();
             nearest_zombie->update_health(projectiles[i]->get_damage());
             projectiles.erase(projectiles.begin() + i);
-            if (nearest_zombie->get_health()<= 0)
-                {
-                    num_zombies_in_row[nearest_zombie->get_row() - 1]--;
-                    auto save_z = nearest_zombie;
-                    zombies.erase(zombies.begin() + find_zombie_index(nearest_zombie));
-                    delete save_z;
-                }
+            if (nearest_zombie->get_health() <= 0)
+            {
+                num_zombies_in_row[nearest_zombie->get_row() - 1]--;
+                auto save_z = nearest_zombie;
+                zombies.erase(zombies.begin() + find_zombie_index(nearest_zombie));
+                delete save_z;
+            }
             delete save_p;
             i--;
         }
@@ -298,19 +303,65 @@ void System::win_render()
     window.display();
 }
 
+void System::start_menu()
+{
+    if (!menu_texture.loadFromFile(PICS_PATH + MENU_SCREEN))
+    {
+        cerr << ERROR_MESSAGE << endl;
+    }
+    menu_sprite.setTexture(menu_texture);
+    float scaleX = static_cast<float>(WINDOW_LENGTH) / (menu_texture.getSize().x);
+    float scaleY = static_cast<float>(WINDOW_WIDTH) / (menu_texture.getSize().y);
+    menu_sprite.setScale(scaleX, scaleY);
+    window.draw(menu_sprite);
+    window.display();
+    Event event;
+    while (window.pollEvent(event))
+    {
+        bool pressed = false;
+        switch (event.type)
+        {
+        case (Event::KeyPressed):
+            if (event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+            else if (event.key.code == Keyboard::Space)
+            {
+                state = IN_GAME;
+            }
+            break;
+        case (Event::Closed):
+            window.close();
+            break;
+        }
+    }
+}
+
+void System::make_dark_bg()
+{
+    RectangleShape darkOverlay;
+    darkOverlay.setSize(Vector2f(window.getSize().x, window.getSize().y));
+    darkOverlay.setFillColor(sf::Color(0, 0, 0, 150));
+    window.draw(darkOverlay); 
+}
+
 void System::run()
 {
-    bool first_in_game =true;
-    int count_game_over_music = 0;
+    bool first_in_game = true;
+    int count_game_over_entering = 0;
+    bool first_won_entering = true;
     while (window.isOpen() && state != EXIT)
     {
         switch (state)
         {
+        case START:
+            start_menu();
+            break;
         case IN_GAME:
-            if(first_in_game)
+            if (first_in_game)
             {
                 open_grass_walk_music();
-
             }
             handle_attack_wave();
             update();
@@ -320,18 +371,28 @@ void System::run()
             first_in_game = false;
             break;
         case GAMEOVER:
-            count_game_over_music ++;
-            if(count_game_over_music<=3)
+            grass_walk_music.pause();
+            count_game_over_entering++;
+            if(count_game_over_entering ==1)
+            {
+                make_dark_bg();
+            }
+            if (count_game_over_entering <= 3)
             {
                 open_game_over_music();
             }
-            grass_walk_music.pause();
             gameover_render();
             handle_events_win_or_lose();
             break;
         case WON:
+            grass_walk_music.pause();
+            if (first_won_entering)
+            {
+                open_victory_music();
+            }
             win_render();
             handle_events_win_or_lose();
+            first_won_entering = false;
             break;
         }
     }
@@ -371,22 +432,22 @@ void System::update_suns()
     }
 }
 
-Zombie* System::find_nearest_zombie(int plant_row, int plant_pos_x)
+Zombie *System::find_nearest_zombie(int plant_row, int plant_pos_x)
 {
-    vector<int > zombies_pos_x;
-    for(auto zombie : zombies)
+    vector<int> zombies_pos_x;
+    for (auto zombie : zombies)
     {
-        if(zombie->get_row() == plant_row && zombie->get_pos_x() >= plant_pos_x)
+        if (zombie->get_row() == plant_row && zombie->get_pos_x() >= plant_pos_x)
         {
             zombies_pos_x.push_back(zombie->get_pos_x());
         }
     }
-    if(zombies_pos_x.empty())
+    if (zombies_pos_x.empty())
         return NULL;
     sort(zombies_pos_x.begin(), zombies_pos_x.end());
-    for(auto zombie : zombies)
+    for (auto zombie : zombies)
     {
-        if(zombies_pos_x[0] == zombie->get_pos_x())
+        if (zombies_pos_x[0] == zombie->get_pos_x())
         {
             return zombie;
         }
@@ -396,12 +457,12 @@ Zombie* System::find_nearest_zombie(int plant_row, int plant_pos_x)
 
 void System::update_plants()
 {
-        for (auto plant : plants)
-        {
-            int plant_row = plant->get_row();
-            int plant_pos_x = plant->get_pos().x;
-            plant->update(projectiles, num_zombies_in_row, suns,find_nearest_zombie(plant_row,plant_pos_x));
-        }
+    for (auto plant : plants)
+    {
+        int plant_row = plant->get_row();
+        int plant_pos_x = plant->get_pos().x;
+        plant->update(projectiles, num_zombies_in_row, suns, find_nearest_zombie(plant_row, plant_pos_x));
+    }
 }
 
 void System::update_zombies()
@@ -648,9 +709,9 @@ void System::render()
 
 void System::open_grass_walk_music()
 {
-    if(!grass_walk_music.openFromFile(MUSICS_PATH + GRASS_WALK_MUSIC))
+    if (!grass_walk_music.openFromFile(MUSICS_PATH + GRASS_WALK_MUSIC))
     {
-        cerr << ERROR_MESSAGE<<endl;
+        cerr << ERROR_MESSAGE << endl;
     }
     grass_walk_music.setLoop(true);
     grass_walk_music.play();
@@ -658,12 +719,20 @@ void System::open_grass_walk_music()
 
 void System::open_game_over_music()
 {
-    if(!game_over_music.openFromFile(MUSICS_PATH + GAME_OVER_MUSIC))
+    if (!game_over_music.openFromFile(MUSICS_PATH + GAME_OVER_MUSIC))
     {
-        cerr << ERROR_MESSAGE<<endl;
+        cerr << ERROR_MESSAGE << endl;
     }
     game_over_music.play();
+}
 
+void System::open_victory_music()
+{
+    if (!victory_music.openFromFile(MUSICS_PATH + VICTORY_MUSIC))
+    {
+        cerr << ERROR_MESSAGE << endl;
+    }
+    victory_music.play();
 }
 
 void System::write_cooldown_text()

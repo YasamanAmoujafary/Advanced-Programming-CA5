@@ -2,7 +2,7 @@
 
 int main()
 {
-    System system(IN_GAME);
+    System system(START);
     system.make_map();
     system.run();
 }

@@ -53,6 +53,7 @@ const string MUSICS_PATH = "./musics/";
 const char TYPE_DELIMETER = ',';
 const char INTRO_DELIMETER = ':';
 const char DATA_DELIMETER = '-';
+const string MENU_SCREEN = "menu_screen.png";
 const string SUNFLOWER_PNG = "Sunflower.png";
 const string WALLNUT_PNG = "Wallnut_body.png";
 const string PEASHOOTER_PNG = "Peashooter.png";
@@ -88,6 +89,7 @@ const string WATERMELON_COOLDOWN_PNG = "watermelon_cooldown.png";
 const string WATERMELON_PNG = "watermelon.png";
 const string GRASS_WALK_MUSIC = "grass_walk.ogg";
 const string GAME_OVER_MUSIC = "game_over.ogg";
+const string VICTORY_MUSIC = "victory_music.ogg";
 
 
 #endif

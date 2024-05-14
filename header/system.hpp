@@ -3,6 +3,7 @@
 
 enum State
 {
+    START,
     IN_GAME,
     WON,
     GAMEOVER,
@@ -32,12 +33,14 @@ private:
     vector<Sun *> suns;
     Plant *dragged_object;
     State state;
+    Texture menu_texture;
     Texture background_texture;
     Texture item_bar_texture;
     Texture lost_texture;
     Texture win_texture;
     Texture sun_texture;
     Texture sun_icon_bg_texture;
+    Sprite menu_sprite;
     Sprite background_sprite;
     Sprite item_bar_sprite;
     Sprite win_sprite;
@@ -50,6 +53,7 @@ private:
     Clock sun_clock_from_sky;
     Music grass_walk_music;
     Music game_over_music;
+    Music victory_music;
     vector<int> attack_data;
     vector<int> sun_data;
     vector<int> time_interval;
@@ -88,6 +92,9 @@ private:
     void open_grass_walk_music();
     void open_game_over_music();
     int find_zombie_index(Zombie *zombie);
+    void open_victory_music();
+    void start_menu();
+    void make_dark_bg();
     pair<Vector2i, bool> get_center_block_position(Vector2i mouse_pos);
     Zombie *find_nearest_zombie(int plant_row, int plant_pos_x);
 };

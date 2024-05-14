@@ -205,10 +205,9 @@ void Watermelon::update(vector<Projectile *> &projectiles, vector<int> num_zombi
         plantClock.restart();
         Vector2i projectile_pos;
         projectile_pos.y = pos.y ;
-        projectile_pos.x = pos.x ; // change it to make it sexier
+        projectile_pos.x = pos.x ;
         if (num_zombies_in_row[row - 1] != 0)
         {
-            // cout<<"watermelon created"<<endl;
             Watermelon_projectile *watermelon_projectile = new Watermelon_projectile(window_ptr, projectile_pos, WATERMELON_PROJECTILE_PNG);
             watermelon_projectile->set_zombie_collision(_zombie_to_be_collided);
             double time_in_motion =  (double)(_zombie_to_be_collided->get_pos_x() - projectile_pos.x)/(_zombie_to_be_collided->get_speed()+watermelon_projectile->get_speed()) / 25;
