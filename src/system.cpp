@@ -57,6 +57,8 @@ void System::handle_cooldown()
 
 void System::generate_zombie_random_times()
 {
+    if(current_phase == attack_data[0] / attack_data[1])
+        return;
     if (systemClock.getElapsedTime().asSeconds() >= attack_data[1])
     {
         systemClock.restart();
@@ -78,8 +80,6 @@ void System::generate_zombie_random_times()
 
 void System::generate_zombies()
 {
-    if (current_phase == attack_data[0] / attack_data[1])
-        return;
     for (int i = 0; i < zombie_arrival_time.size(); i++)
     {
         if (zombie_arrival_time[i] <= systemClock.getElapsedTime().asSeconds() && zombie_arrival_time[i] != -1)
@@ -359,11 +359,12 @@ void System::run()
             start_menu();
             break;
         case IN_GAME:
+            if(current_phase != attack_data[0] / attack_data[1] +1)
+                handle_attack_wave();
             if (first_in_game)
             {
                 open_grass_walk_music();
             }
-            handle_attack_wave();
             update();
             handle_events();
             render();
@@ -388,6 +389,7 @@ void System::run()
             grass_walk_music.pause();
             if (first_won_entering)
             {
+                make_dark_bg();
                 open_victory_music();
             }
             win_render();
